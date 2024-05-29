@@ -11,6 +11,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from './ui/breadcrumb';
+import { UserButton } from '@clerk/nextjs';
 const Header = () => {
   const pathname = usePathname();
   const firstPath = pathname.split('/')[1];
@@ -44,10 +45,7 @@ const Header = () => {
           {secondPath === '' ? oneBreadCrumb : twoBreadCrumb}
         </Breadcrumb>
 
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <UserButton />
       </header>
     </>
   );

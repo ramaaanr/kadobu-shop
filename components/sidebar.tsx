@@ -43,7 +43,7 @@ const Sidebar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href="/dashboard" className={navItemClass('dashboard')}>
+                <Link href="/" className={navItemClass('dashboard')}>
                   <Home className="h-5 w-5" />
                   <span className="sr-only">Dashboard</span>
                 </Link>
@@ -54,7 +54,7 @@ const Sidebar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href="/order" className={navItemClass('order')}>
+                <Link href="/orders" className={navItemClass('order')}>
                   <ShoppingCart className="h-5 w-5" />
                   <span className="sr-only">Orders</span>
                 </Link>
