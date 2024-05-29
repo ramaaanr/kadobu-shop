@@ -1,34 +1,50 @@
-// 'use client';
+'use client';
 
-import { columns, Product } from '../product/column';
-import { DataTable } from '../product/data-table';
-// Fetch data from your API here.
+import React, { useState, useEffect } from 'react';
+import { columns, Product } from './column';
+import { DataTable } from './data-table';
+import { DataTableLoading } from './data-table-loading';
 
-import Header from '@/components/header';
-import Sidebar from '@/components/sidebar';
+const Page = () => {
+  const [data, setData] = useState<Product[]>([]);
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
-async function getKatalog() {
-  console.log();
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/katalogs/`, {
-    cache: 'no-cache',
-  });
+  const fetchKatalog = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/katalogs/`, {
+        cache: 'no-cache',
+      });
 
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error('Failed to fetch data');
+      if (!res.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const result = await res.json();
+      setData(result.data);
+    } catch (error: any) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchKatalog();
+  }, []);
+
+  if (error) {
+    throw new Error('Halaman PRoduk Bermasalah');
   }
-  return res.json();
-}
 
-const Page = async () => {
-  const { data } = await getKatalog();
   return (
     <>
-      <Sidebar />
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-        <Header />
+      {loading ? (
+        <DataTableLoading columns={columns} data={data} />
+      ) : (
         <DataTable columns={columns} data={data} />
-      </div>
+      )}
     </>
   );
 };

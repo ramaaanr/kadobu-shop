@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,6 +40,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const route = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
@@ -61,7 +63,9 @@ export function DataTable<TData, TValue>({
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="w-full">
           <CardDescription className="flex w-full gap-x-2">
-            <Button>Tambah Produk</Button>
+            <Button onClick={() => route.push('/product/add')}>
+              Tambah Produk
+            </Button>
             <Input
               placeholder="Kode Produk"
               value={

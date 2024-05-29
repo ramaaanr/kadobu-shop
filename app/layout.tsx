@@ -25,7 +25,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${poppins.className} overflow-x-hidden`}>
           {children}
-          <Toaster />
+          <Toaster richColors />
         </body>
       </html>
     </ClerkProvider>
