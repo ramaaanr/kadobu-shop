@@ -1,11 +1,10 @@
 'use client';
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -23,12 +22,14 @@ import { formSchema } from '@/utils/productFormSchema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Header from '@/components/header';
-import Sidebar from '@/components/sidebar';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { ImagePlus } from 'lucide-react';
 
 export default function Page() {
+  const [file, setFile] = useState('');
+  const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -80,10 +81,23 @@ export default function Page() {
       toast.error('Product Gagal Ditambahkan');
     }
   };
-
   return (
     <>
-      <div className="form-container mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
+      <div className="form-container flex gap-x-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
+        {preview ? (
+          <Image
+            className="rounded-lg"
+            width={'330'}
+            alt={'gambar'}
+            height={'440'}
+            src={preview}
+          />
+        ) : (
+          <div className="preview-image w-[330px] h-[330px] rounded-lg flex flex-col justify-center items-center bg-gray-100">
+            <ImagePlus size="180" color="#9aa0a6" />
+            <p className="text-gray-500 font-medium">Preview Gambar Product</p>
+          </div>
+        )}
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -146,7 +160,7 @@ export default function Page() {
               name="statusProduk"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs">Foto Produk</FormLabel>
+                  <FormLabel className="text-xs">Status Produk</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -185,7 +199,13 @@ export default function Page() {
                   <FormControl>
                     <Input
                       type="file"
-                      onChange={(e) => field.onChange(e.target.files)}
+                      onChange={(e) => {
+                        field.onChange(e.target.files);
+                        if (e.target.files && e.target.files.length > 0) {
+                          const image = e.target.files[0];
+                          setPreview(URL.createObjectURL(image));
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

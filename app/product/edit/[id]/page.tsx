@@ -44,6 +44,7 @@ import Loading from './loading';
 export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [preview, setPreview] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState('');
   const form = useForm<z.infer<typeof formSchema>>({
@@ -80,6 +81,7 @@ export default function Page({ params }: { params: { id: string } }) {
           idToko: result.id_toko,
           // fotoProduk: undefined,
         });
+        setPreview(result.foto_produk);
         setImageUrl(result.foto_produk);
       } catch (err: any) {
         throw new Error('Tidak dapat mengambil data');
@@ -167,7 +169,7 @@ export default function Page({ params }: { params: { id: string } }) {
           width={'330'}
           alt={'gambar'}
           height={'440'}
-          src={`${process.env.NEXT_PUBLIC_API_URL}/product_images/${imageUrl}`}
+          src={preview}
         />
         <Form {...form}>
           <form
@@ -271,7 +273,13 @@ export default function Page({ params }: { params: { id: string } }) {
                   <FormControl>
                     <Input
                       type="file"
-                      onChange={(e) => field.onChange(e.target.files)}
+                      onChange={(e) => {
+                        field.onChange(e.target.files);
+                        if (e.target.files && e.target.files.length > 0) {
+                          const image = e.target.files[0];
+                          setPreview(URL.createObjectURL(image));
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormDescription className="text-red-400">
