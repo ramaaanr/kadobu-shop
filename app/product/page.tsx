@@ -13,16 +13,17 @@ const Page = () => {
   const fetchKatalog = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/katalogs/`, {
+      const response = await fetch(`/api/product/`, {
         cache: 'no-cache',
       });
 
-      if (!res.ok) {
-        throw new Error('Failed to fetch data');
+      const res = await response.json();
+      if (!response.ok) {
+        setError(true);
+        console.log(res.message);
+      } else {
+        setData(res.data);
       }
-
-      const result = await res.json();
-      setData(result.data);
     } catch (error: any) {
       setError(true);
     } finally {
@@ -35,7 +36,7 @@ const Page = () => {
   }, []);
 
   if (error) {
-    throw new Error('Halaman PRoduk Bermasalah');
+    throw new Error('Halaman Produk Bermasalah');
   }
 
   return (

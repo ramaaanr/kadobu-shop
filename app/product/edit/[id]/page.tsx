@@ -18,7 +18,7 @@ import {
   Form,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { formSchema } from '@/utils/productFormSchema';
+import { formSchema } from '@/utils/productEditFormSchema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -27,11 +27,25 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ImagePlus } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
-import { API_PRODUCT, BASE_API } from '@/config/kadobu-api';
+import { API_PRODUCT, BASE_API, HEADERS_PUBLIC } from '@/config/kadobu-api';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogFooter,
+} from '@/components/ui/alert-dialog';
 
 export default function Page({ params }: { params: { id: string } }) {
   const { isLoaded: isAuthLoaded, orgId } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<string>('');
+  const [error, setError] = useState(false);
+
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,70 +60,78 @@ export default function Page({ params }: { params: { id: string } }) {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    alert('submiting');
-    try {
-      const formData = new FormData();
-      formData.append('namaProduk', data.namaProduk);
-      formData.append('hargaProduk', data.hargaProduk.toString());
-      formData.append('deskripsiProduk', data.deskripsiProduk);
-      formData.append('status', data.statusProduk);
-      formData.append('stokProduk', data.stokProduk.toString());
-      formData.append('idToko', `${orgId}`);
-      formData.append('fotoProduk', data.fotoProduk[0]);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/katalogs`,
-        {
-          method: 'POST',
-          body: formData,
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const responseData = await response.json();
-
-      if (responseData.errors) {
-        // const errors = responseData.errors;
-        toast.error('Product Gagal Ditambahkan');
-      } else {
-        toast.success('Product Berhasil Ditambahkan');
-        router.push('/product');
-      }
-    } catch (error) {
-      toast.error('Product Gagal Ditambahkan');
-    }
-  };
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const kode = params.id;
-        const res = await fetch(`${API_PRODUCT}/${kode}`);
-        if (!res.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const result = await res.json();
-        const { data: product } = result;
+      const response = await fetch(`/api/product/${params.id}`);
+      if (response.ok) {
+        const res = await response.json();
+        const { data } = res;
         form.reset({
-          namaProduk: product.nama_produk,
-          hargaProduk: product.harga_produk,
-          deskripsiProduk: product.deskripsi_produk,
-          stokProduk: product.stok_produk,
-          statusProduk: product.status_produk,
-          idToko: product.id_toko,
+          namaProduk: data.nama_produk,
+          hargaProduk: data.harga_produk,
+          deskripsiProduk: data.deskripsi_produk,
+          stokProduk: data.stok_produk,
+          statusProduk: data.status_produk,
+          idToko: 1,
           fotoProduk: undefined,
         });
-        setPreview(`${BASE_API}/product_images/${product.foto_produk}`);
-      } catch (err: any) {
-        throw new Error('Edit Bermasalah');
+        setPreview(`${BASE_API}/product_images/${data.foto_produk}`);
+        setLoading(false);
+      } else {
+        setError(true);
       }
     };
-
     fetchData();
   }, []);
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (!isAuthLoaded) return null;
+    const formData = new FormData();
+    formData.append('namaProduk', data.namaProduk);
+    formData.append('hargaProduk', data.hargaProduk.toString());
+    formData.append('deskripsiProduk', data.deskripsiProduk);
+    formData.append('status', data.statusProduk);
+    formData.append('stokProduk', data.stokProduk.toString());
+    formData.append('idToko', `${orgId}`);
+    formData.append('fotoProduk', data.fotoProduk ? data.fotoProduk[0] : '');
+
+    const response = await fetch(`${API_PRODUCT}/${params.id}`, {
+      method: 'PATCH',
+      headers: {
+        'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const responseData = await response.json();
+
+    if (responseData.errors) {
+      // const errors = responseData.errors;
+      toast.error('Product Gagal Dirubah');
+    } else {
+      toast.success('Product Berhasil Dirubah');
+      // router.push('/product');
+    }
+  };
+
+  const deleteHandler = async () => {
+    const response = await fetch(`${API_PRODUCT}/${params.id}`, {
+      method: 'DELETE',
+      headers: {
+        'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
+      },
+    });
+
+    if (response.ok) {
+      router.push('/product');
+    }
+  };
+
+  if (loading) return <>Loading</>;
   return (
     <>
       <div className="form-container flex gap-x-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
@@ -120,7 +142,6 @@ export default function Page({ params }: { params: { id: string } }) {
           height={'440'}
           src={preview}
         />
-
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -247,9 +268,35 @@ export default function Page({ params }: { params: { id: string } }) {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
-              Submit
-            </Button>
+            <div className="button-container flex w-full col-span-2 gap-x-4">
+              <Button className="w-full" type="submit">
+                Submit
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger className="w-full" asChild>
+                  <Button
+                    variant={'secondary'}
+                    className="w-full"
+                    type="button"
+                  >
+                    Hapus
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Apakah anda ingin menghapus Produk?
+                    </AlertDialogTitle>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Tidak</AlertDialogCancel>
+                    <AlertDialogAction onClick={deleteHandler}>
+                      Ya
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </form>
         </Form>
       </div>

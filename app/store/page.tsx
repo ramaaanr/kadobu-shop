@@ -28,5 +28,9 @@ export default function Page() {
     return <div>Please sign in</div>;
   }
 
-  return <div>{canManage ? 'Can Manage' : 'Cant Manage'}</div>;
+  if (canManage) {
+    return <>Store</>;
+  } else {
+    return <Unstore />;
+  }
 }

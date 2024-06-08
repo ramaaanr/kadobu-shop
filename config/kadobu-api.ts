@@ -8,5 +8,17 @@ const HEADERS = {
   'x-api-key': API_KEY,
   'Content-Type': 'application/json',
 };
+const HEADERS_PUBLIC = {
+  'x-api-key': process.env.NEXT_PUBLIC_API_KEY,
+  'Content-Type': 'application/json',
+};
 
-export { BASE_API, API_PENJUAL, API_TOKO, API_PRODUCT, HEADERS, API_ORDER };
+export {
+  BASE_API,
+  API_PENJUAL,
+  API_TOKO,
+  API_PRODUCT,
+  HEADERS,
+  API_ORDER,
+  HEADERS_PUBLIC,
+};

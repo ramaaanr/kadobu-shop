@@ -220,7 +220,7 @@ export default function Page() {
             <Button
               onClick={checkoutHandler}
               className="w-full"
-              disabled={!product}
+              disabled={!product || product?.stok_produk === 0}
             >
               Bayar
             </Button>

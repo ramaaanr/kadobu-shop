@@ -21,8 +21,6 @@ export async function GET(request: NextRequest) {
       email: emailAddresses[0].emailAddress,
     };
 
-    console.log(formData);
-
     const resUserById = await fetch(`${API_PENJUAL}/${id}`, {
       headers: HEADERS,
     });
@@ -48,7 +46,6 @@ export async function GET(request: NextRequest) {
         { status: 400 },
       );
     }
-
     return NextResponse.redirect(new URL('/', request.url));
   } catch (error: any) {
     return NextResponse.json(

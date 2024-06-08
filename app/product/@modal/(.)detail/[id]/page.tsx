@@ -31,7 +31,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const fetchData = async () => {
       try {
         const kode = params.id;
-        const res = await fetch(`${API_PRODUCT}/${kode}`);
+        const res = await fetch(`/api/product/${kode}`);
 
         if (!res.ok) {
           throw new Error('Failed to fetch data');

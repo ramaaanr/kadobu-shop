@@ -33,21 +33,19 @@ const formSchema = z.object({
       message: 'Harga Produk tidak boleh negatif',
     }),
   idToko: z.number().min(0),
-  fotoProduk: z
-    .any()
-    .refine(
-      (file) =>
-        file instanceof FileList && file !== undefined && file[0] !== undefined,
-      'File gambar tidak dipilih',
-    )
-    .refine(
-      (file) => file?.[0]?.size < MAX_FILE_SIZE,
-      'Ukuran file gambar melebihi 2MB',
-    )
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.[0]?.type),
-      'Format file gambar tidak didukung (harus .jpeg, .jpg, .png, atau .webp)',
-    ),
+  fotoProduk: z.any().refine((file) => {
+    if (
+      file instanceof FileList &&
+      file !== undefined &&
+      file[0] !== undefined
+    ) {
+      return (
+        file?.[0]?.size < MAX_FILE_SIZE &&
+        ACCEPTED_IMAGE_TYPES.includes(file?.[0]?.type)
+      );
+    }
+    return true;
+  }, 'Cek Kembali Ukuran file gambar tidak boleh melebihi 2MB dan Format file gambar tidak didukung (harus .jpeg, .jpg, .png, atau .webp)'),
 });
 
 export { formSchema };

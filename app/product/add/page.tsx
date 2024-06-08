@@ -27,6 +27,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ImagePlus } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
+import { API_PRODUCT, HEADERS_PUBLIC } from '@/config/kadobu-api';
 
 export default function Page() {
   const { isLoaded: isAuthLoaded, orgId } = useAuth();
@@ -57,13 +58,13 @@ export default function Page() {
       formData.append('idToko', `${orgId}`);
       formData.append('fotoProduk', data.fotoProduk[0]);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/katalogs`,
-        {
-          method: 'POST',
-          body: formData,
+      const response = await fetch(`${API_PRODUCT}`, {
+        method: 'POST',
+        headers: {
+          'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
         },
-      );
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error('Network response was not ok');

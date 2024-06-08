@@ -38,6 +38,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { Badge, OrderStatusBadge } from '@/components/ui/badge';
 
 interface statusKet {
   status: string;
@@ -128,13 +129,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     {dateFormatter(data.created_at)}
                   </div>
                   <div className="">Status</div>
-                  <div
-                    className={`py-1 px-2 h-fit ${
-                      orderStatus[prevData.status].color
-                    } text-white rounded-md text-xs`}
-                  >
-                    {orderStatus[prevData.status].text}
-                  </div>
+                  <OrderStatusBadge prevData={prevData} />
 
                   {data.status === 'PENDING' ? (
                     ''

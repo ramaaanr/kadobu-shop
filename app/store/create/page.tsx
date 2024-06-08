@@ -70,9 +70,11 @@ export default function Page() {
       setSubmitting(true);
       const res = await fetch(`${API_TOKO}`, {
         method: 'POST',
+        headers: {
+          'x-api-key': process.env.NEXT_PUBLIC_API_KEY || '',
+        },
         body: formData,
       });
-
       toast.success('Toko Berhasil Dibuat');
       router.push('/store');
     } catch (error: any) {
