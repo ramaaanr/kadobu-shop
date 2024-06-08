@@ -18,9 +18,7 @@ export default function Layout({
       <Sidebar />
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <Header />
-        <Protect condition={(has) => has({ role: 'org:owner' })}>
-          {children}
-        </Protect>
+        {children}
       </div>
     </>
   );

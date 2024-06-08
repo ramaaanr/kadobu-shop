@@ -1,24 +1,23 @@
+import { API_TOKO, HEADERS } from '@/config/kadobu-api';
+import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-  try {
-    const formData = await request.formData();
-    const file = await request.blob();
-    const data = {
-      namaToko: formData.get('namaToko'),
-      deskripsiToko: formData.get('deskripsiToko'),
-      alamatToko: formData.get('alamatToko'),
-      penjualId: formData.get('penjualId'),
-      fotoToko: file,
-    };
-    return Response.json({
-      status: true,
-      data: data,
-    });
-  } catch (error: any) {
-    return Response.json({
-      status: false,
-      error: error.message,
-    });
+export async function GET(request: Request) {
+  const { orgId } = auth();
+  if (!orgId) {
+    return NextResponse.json(
+      { status: false, message: "User don't have a Store" },
+      { status: 400 },
+    );
   }
+  const response = await fetch(`${API_TOKO}/${orgId}`, {
+    headers: HEADERS,
+    cache: 'no-cache',
+  });
+  const res = await response.json();
+  const status = response.ok ? 200 : 400;
+  if (status === 200) {
+    delete res.result.katalog;
+  }
+  return NextResponse.json({ ...res }, { status });
 }

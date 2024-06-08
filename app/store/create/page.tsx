@@ -32,7 +32,7 @@ export default function Page() {
     setActive,
     userMemberships,
   } = useOrganizationList(UserMembershipParams);
-  const { isLoaded: isUserLoaded, userId } = useAuth();
+  const { isLoaded: isUserLoaded, userId, orgId } = useAuth();
   const [preview, setPreview] = useState<string | null>(null);
   const [isSubmitting, setSubmitting] = useState(false);
   const router = useRouter();
@@ -45,6 +45,10 @@ export default function Page() {
       fotoToko: undefined,
     },
   });
+
+  if (orgId) {
+    router.push('/store');
+  }
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {

@@ -9,9 +9,9 @@ const ACCEPTED_IMAGE_TYPES: string[] = [
 ];
 
 export const formSchema = z.object({
-  namaToko: z.string().min(2).max(50),
-  deskripsiToko: z.string().min(15).max(100),
-  alamatToko: z.string().min(15).max(25),
+  namaToko: z.string().min(5).max(50),
+  deskripsiToko: z.string().min(15).max(500),
+  alamatToko: z.string().min(15).max(50),
   fotoToko: z
     .any()
     .refine(
