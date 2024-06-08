@@ -6,6 +6,8 @@ import { rupiahFormatter } from '@/utils/stringFormatter';
 import _ from 'lodash';
 import Modal from '@/components/modal';
 import { Skeleton } from '@/components/ui/skeleton';
+import { API_PRODUCT } from '@/config/kadobu-api';
+import ProductImage from '@/components/product-image';
 interface ProductProps {
   kode_produk: string;
   nama_produk: string;
@@ -29,17 +31,19 @@ export default function Page({ params }: { params: { id: string } }) {
     const fetchData = async () => {
       try {
         const kode = params.id;
-        const res = await fetch(`/api/product/${kode}`);
+        const res = await fetch(`${API_PRODUCT}/${kode}`);
 
         if (!res.ok) {
           throw new Error('Failed to fetch data');
         }
-        const { result } = await res.json();
-        setProduct(result); // Set product data
-        setLoading(false); // Set loading to false
+        const result = await res.json();
+        setProduct(result.data); // Set product data
+        setLoading(false);
+        console.log(result); // Set loading to false
       } catch (err: any) {
         setError(err.message);
         setLoading(false); // Set loading to false even on error
+        console.log(err.message);
         throw new Error('Failed to fetch data');
       }
     };
@@ -47,7 +51,7 @@ export default function Page({ params }: { params: { id: string } }) {
     fetchData();
   }, [params.id]);
 
-  if (error) return <Modal>Error</Modal>;
+  if (error) return <Modal>Product Not Found</Modal>;
   if (loading) {
     return (
       <Modal>
@@ -73,12 +77,10 @@ export default function Page({ params }: { params: { id: string } }) {
     <>
       <Modal>
         <div className="detail-container w-full flex gap-x-2 items-center">
-          <Image
-            className="rounded-lg"
-            width={'150'}
-            alt={'gambar'}
-            height={'200'}
-            src={`${process.env.NEXT_PUBLIC_API_URL}/product_images/${product.foto_produk}`}
+          <ProductImage
+            width={200}
+            height={150}
+            foto_produk={product.foto_produk}
           />
           <div className="text-container flex flex-col gap-x-2 w-full">
             <div className="property-container flex">

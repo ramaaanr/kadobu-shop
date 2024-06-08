@@ -28,6 +28,7 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ProductActions from '@/components/product-actions';
+import ProductImage from '@/components/product-image';
 
 export type Product = {
   nama_produk: string;
@@ -52,16 +53,9 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: 'foto_produk',
     header: '',
     cell: ({ row }) => {
-      const foto_produk = row.getValue('foto_produk');
-      return (
-        <Image
-          width={64}
-          height={64}
-          className="rounded-lg"
-          src={`${process.env.NEXT_PUBLIC_API_URL}/product_images/${foto_produk}`}
-          alt="foto_produk"
-        />
-      );
+      const foto_produk: string = row.getValue('foto_produk');
+
+      return <ProductImage height={64} width={64} foto_produk={foto_produk} />;
     },
   },
   {

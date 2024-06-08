@@ -43,7 +43,7 @@ export function DataTableLoading<TData, TValue>({
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="w-full">
           <CardDescription className="flex w-full gap-x-2">
-            <Button disabled>Tambah Produk</Button>
+            <Button disabled>Tambah Pesanan</Button>
             <Input disabled placeholder="Kode Produk" className="w-full" />
           </CardDescription>
         </CardHeader>

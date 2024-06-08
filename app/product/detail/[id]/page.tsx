@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { rupiahFormatter } from '@/utils/stringFormatter';
 import _ from 'lodash';
 import Loading from '../../loading';
+import ProductImage from '@/components/product-image';
+import { API_PRODUCT } from '@/config/kadobu-api';
 
 interface ProductProps {
   kode_produk: string;
@@ -34,13 +36,12 @@ export default function Page({ params }: { params: { id: string } }) {
       setLoading(true);
       try {
         const kode = params.id;
-        const res = await fetch(`/api/product/${kode}`);
-
+        const res = await fetch(`${API_PRODUCT}/${kode}`);
         if (!res.ok) {
           throw new Error('Failed to fetch data');
         }
-        const { result } = await res.json();
-        setProduct(result); // Set product data
+        const result = await res.json();
+        setProduct(result.data); // Set product data
         setLoading(false); // Set loading to false
       } catch (err: any) {
         setError(err.message);
@@ -52,18 +53,15 @@ export default function Page({ params }: { params: { id: string } }) {
     fetchData();
   }, [params.id]);
 
-  // Check if product is not null before rendering
   if (loading) return <Loading />;
 
   return (
     <>
       <div className="form-container flex mx-auto w-[900px] rounded-lg border border-slate-100 shadow-sm p-4">
-        <Image
-          className="rounded-lg"
-          width={'330'}
-          alt={'gambar'}
-          height={'440'}
-          src={`${process.env.NEXT_PUBLIC_API_URL}/product_images/${product.foto_produk}`}
+        <ProductImage
+          width={330}
+          height={440}
+          foto_produk={product.foto_produk}
         />
         <div className="text-container flex flex-col gap-y-2 w-full px-8">
           <div className="property-container flex">

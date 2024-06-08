@@ -50,7 +50,7 @@ const formSchema = z.object({
     ),
 });
 
-const formSchemaEdit = z.object({
+const skemaEdit = z.object({
   namaProduk: z.string().min(2).max(50),
   hargaProduk: z
     .any()
@@ -75,6 +75,13 @@ const formSchemaEdit = z.object({
       message: 'Harga Produk tidak boleh negatif',
     }),
   idToko: z.number().min(0),
+  fotoProduk: z
+    .any()
+    .refine(
+      (file) =>
+        file instanceof FileList && file !== undefined && file[0] !== undefined,
+      'File gambar tidak dipilih',
+    ),
 });
 
-export { formSchema, formSchemaEdit };
+export { formSchema, skemaEdit };

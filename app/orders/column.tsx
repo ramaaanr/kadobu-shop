@@ -1,36 +1,45 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { dateFormatter, rupiahFormatter } from '@/utils/stringFormatter';
+import orderStatus from '@/config/order-status';
+import {
+  capitalCaseAndRemoveUnderscore,
+  dateFormatter,
+  rupiahFormatter,
+} from '@/utils/stringFormatter';
 import {} from '@radix-ui/react-dialog';
 import { ColumnDef } from '@tanstack/react-table';
 import _ from 'lodash';
 import { ArrowUpDown } from 'lucide-react';
 import Link from 'next/link';
-
-export type Order = {
-  id: number;
+export interface Order {
+  id_order: number;
   kode_pesanan: string;
-  jenis_pembayaran: string;
-  id_pelanggan: number;
-  nama_pelanggan: string;
-  id_produk: number;
-  nama_produk: string;
-  keterangan: string;
+  jenis_pembayaran: string | null;
+  status: string;
   total_pesanan: number;
   total_harga: number;
-  status: string;
-  created_at: string;
-};
+  keterangan: string;
+  created_at: string; // Consider using Date if you parse the string into a Date object
+  snap_token: string;
+  nama_toko: string;
+  id_toko: string;
+  kode_produk: string;
+  nama_produk: string;
+  foto_produk: string;
+  id_pembeli: string;
+  username: string;
+  email: string;
+}
 
 export const columns: ColumnDef<Order>[] = [
   {
-    accessorKey: 'id',
+    accessorKey: 'kode_pesanan',
     header: '',
     cell: (row: any) => (
       <Link
         className="text-xs text-purple-400 hover:text-purple-600"
-        href={`/orders/detail/${row.getValue('kode_produk')}`}
+        href={`/orders/detail/${row.getValue('kode_pesanan')}`}
       >
         Edit & Detail
       </Link>
@@ -51,7 +60,7 @@ export const columns: ColumnDef<Order>[] = [
     },
   },
   {
-    accessorKey: 'nama_pelanggan',
+    accessorKey: 'username',
     header: ({ column }) => {
       return (
         <Button
@@ -77,6 +86,16 @@ export const columns: ColumnDef<Order>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const getPembayaran: string = row.getValue('jenis_pembayaran');
+      const pembayaran: string = getPembayaran || 'Belum Dibayarkan';
+
+      return (
+        <div className={`${getPembayaran ? '' : 'text-gray-500'}`}>
+          {capitalCaseAndRemoveUnderscore(pembayaran)}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'status',
@@ -89,6 +108,19 @@ export const columns: ColumnDef<Order>[] = [
           Status
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const getStatus: string = row.getValue('status');
+      const statusColor = orderStatus[getStatus].color;
+      const statusText = orderStatus[getStatus].text;
+
+      return (
+        <div
+          className={`py-1 px-2 ${statusColor} text-white rounded-md text-xs`}
+        >
+          {statusText}
+        </div>
       );
     },
   },

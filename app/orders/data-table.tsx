@@ -67,18 +67,18 @@ export function DataTable<TData, TValue>({
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="w-full">
           <CardDescription className="flex w-full gap-x-2">
-            <Button onClick={() => route.push('/product/add')}>
-              Tambah Produk
+            <Button onClick={() => route.push('/orders/add')}>
+              Tambah Pesanan
             </Button>
             <Input
               placeholder="Kode Produk"
               value={
-                (table.getColumn('kode_produk')?.getFilterValue() as string) ??
+                (table.getColumn('kode_pesanan')?.getFilterValue() as string) ??
                 ''
               }
               onChange={(event) =>
                 table
-                  .getColumn('kode_produk')
+                  .getColumn('kode_pesanan')
                   ?.setFilterValue(event.target.value)
               }
               className="w-full"

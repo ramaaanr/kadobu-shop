@@ -26,9 +26,10 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ImagePlus } from 'lucide-react';
+import { useAuth } from '@clerk/nextjs';
 
 export default function Page() {
-  const [file, setFile] = useState('');
+  const { isLoaded: isAuthLoaded, orgId } = useAuth();
   const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,6 +46,7 @@ export default function Page() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (!isAuthLoaded) return null;
     try {
       const formData = new FormData();
       formData.append('namaProduk', data.namaProduk);
@@ -52,9 +54,8 @@ export default function Page() {
       formData.append('deskripsiProduk', data.deskripsiProduk);
       formData.append('status', data.statusProduk);
       formData.append('stokProduk', data.stokProduk.toString());
-      formData.append('idToko', data.idToko.toString());
+      formData.append('idToko', `${orgId}`);
       formData.append('fotoProduk', data.fotoProduk[0]);
-      console.log(formData);
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/katalogs`,

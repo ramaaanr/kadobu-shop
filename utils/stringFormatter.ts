@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import moment from 'moment';
 import 'moment/locale/id';
 const rupiahFormatter = (amount: number): string => {
@@ -22,10 +23,24 @@ const shortenProductName = (name: string): string => {
   }
 };
 
+const capitalCaseAndRemoveUnderscore = (str: string): string => {
+  const camelCased = _.camelCase(str);
+
+  // Then, convert to start case to capitalize the first letter of each word
+  const capitalCased = _.startCase(camelCased);
+
+  return capitalCased;
+};
+
 const dateFormatter = (date: string): string => {
   moment.locale('id'); // Set locale globally
   const tanggal = moment(date);
-  return tanggal.format('llll');
+  return tanggal.format('LL');
 };
 
-export { rupiahFormatter, shortenProductName, dateFormatter };
+export {
+  rupiahFormatter,
+  shortenProductName,
+  dateFormatter,
+  capitalCaseAndRemoveUnderscore,
+};

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -15,38 +15,24 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-  FormDescription,
   Form,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { formSchemaEdit, formSchema } from '@/utils/productFormSchema';
+import { formSchema } from '@/utils/productFormSchema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Header from '@/components/header';
-import Sidebar from '@/components/sidebar';
-import Image from 'next/image';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Skeleton } from '@/components/ui/skeleton';
-import Loading from './loading';
+import Image from 'next/image';
+import { ImagePlus } from 'lucide-react';
+import { useAuth } from '@clerk/nextjs';
+import { API_PRODUCT, BASE_API } from '@/config/kadobu-api';
+
 export default function Page({ params }: { params: { id: string } }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const { isLoaded: isAuthLoaded, orgId } = useAuth();
   const [preview, setPreview] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState('');
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,60 +42,26 @@ export default function Page({ params }: { params: { id: string } }) {
       stokProduk: 0,
       statusProduk: '',
       idToko: 1,
+      fotoProduk: undefined,
     },
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        let res;
-        const kode = params.id;
-        res = await fetch(`/api/product/${kode}`);
-
-        if (!res.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const { result } = await res.json();
-
-        form.reset({
-          namaProduk: result.nama_produk,
-          hargaProduk: result.harga_produk,
-          deskripsiProduk: result.deskripsi_produk,
-          stokProduk: result.stok_produk,
-          statusProduk: result.status_produk,
-          idToko: result.id_toko,
-          // fotoProduk: undefined,
-        });
-        setPreview(result.foto_produk);
-        setImageUrl(result.foto_produk);
-      } catch (err: any) {
-        throw new Error('Tidak dapat mengambil data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (error) return <div>Error: {error}</div>;
-
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    alert('submiting');
     try {
       const formData = new FormData();
-      const kode = params.id;
       formData.append('namaProduk', data.namaProduk);
       formData.append('hargaProduk', data.hargaProduk.toString());
       formData.append('deskripsiProduk', data.deskripsiProduk);
       formData.append('status', data.statusProduk);
       formData.append('stokProduk', data.stokProduk.toString());
-      formData.append('idToko', kode);
+      formData.append('idToko', `${orgId}`);
       formData.append('fotoProduk', data.fotoProduk[0]);
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/katalogs/${kode}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/katalogs`,
         {
-          method: 'PATCH',
+          method: 'POST',
           body: formData,
         },
       );
@@ -131,36 +83,33 @@ export default function Page({ params }: { params: { id: string } }) {
       toast.error('Product Gagal Ditambahkan');
     }
   };
-  const onDelete = async () => {
-    try {
-      const kode = params.id;
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/katalogs/${kode}`,
-        {
-          method: 'DELETE',
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const kode = params.id;
+        const res = await fetch(`${API_PRODUCT}/${kode}`);
+        if (!res.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const result = await res.json();
+        const { data: product } = result;
+        form.reset({
+          namaProduk: product.nama_produk,
+          hargaProduk: product.harga_produk,
+          deskripsiProduk: product.deskripsi_produk,
+          stokProduk: product.stok_produk,
+          statusProduk: product.status_produk,
+          idToko: product.id_toko,
+          fotoProduk: undefined,
+        });
+        setPreview(`${BASE_API}/product_images/${product.foto_produk}`);
+      } catch (err: any) {
+        throw new Error('Edit Bermasalah');
       }
+    };
 
-      const responseData = await response.json();
-
-      if (responseData.errors) {
-        // const errors = responseData.errors;
-        toast.error('Product Gagal Dihapus');
-      } else {
-        toast.success('Product Berhasil Dihapus');
-        router.push('/product');
-      }
-    } catch (error) {
-      toast.error('Product Gagal Dihapus');
-    }
-  };
-
-  if (loading) return <Loading />;
-
+    fetchData();
+  }, []);
   return (
     <>
       <div className="form-container flex gap-x-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
@@ -171,10 +120,11 @@ export default function Page({ params }: { params: { id: string } }) {
           height={'440'}
           src={preview}
         />
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="gap-2 grid grid-cols-2 w-full"
+            className="gap-2 grid grid-cols-2"
           >
             <FormField
               control={form.control}
@@ -263,7 +213,6 @@ export default function Page({ params }: { params: { id: string } }) {
                 </FormItem>
               )}
             />
-            {/* <div></div> */}
             <FormField
               control={form.control}
               name="fotoProduk"
@@ -282,9 +231,6 @@ export default function Page({ params }: { params: { id: string } }) {
                       }}
                     />
                   </FormControl>
-                  <FormDescription className="text-red-400">
-                    Jika tidak ada perubahan pada foto, file tidak harus diinput
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -302,28 +248,8 @@ export default function Page({ params }: { params: { id: string } }) {
               )}
             />
             <Button className="w-full" type="submit">
-              Simpan
+              Submit
             </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button type="button" variant={'secondary'} className="w-full">
-                  Hapus
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Apakah anda yakin ingin menghapus data ini?
-                  </AlertDialogTitle>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={onDelete}>
-                    Continue
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
           </form>
         </Form>
       </div>
