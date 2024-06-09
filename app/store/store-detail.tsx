@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { API_TOKO, BASE_API } from '@/config/kadobu-api';
+import { useAuth } from '@clerk/nextjs';
 import { Pencil, PenIcon, Store, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -23,6 +24,7 @@ interface Store {
 }
 
 const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
+  const { orgId: orgOwnerId } = useAuth();
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const [namaToko, setNamaToko] = useState('');
@@ -33,7 +35,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
   const [previewFotoToko, setPreviewFotoToko] = useState('');
   const fetchData = async () => {
     setLoading(true);
-    const response = await fetch('/api/store');
+    const response = await fetch(`/api/store/${orgId}`);
     if (response.ok) {
       const res = await response.json();
       const { result } = res;
@@ -149,17 +151,21 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
           <div className="text-2xl w-fit font-semibold text-primary">
             Toko Anda
           </div>
-          <Button
-            onClick={() => setIsEdit(!isEdit)}
-            size={'icon-sm'}
-            variant={'outline'}
-          >
-            {isEdit ? (
-              <XIcon size={12} color="#aaa" />
-            ) : (
-              <Pencil size={12} color="#aaa" />
-            )}
-          </Button>
+          {orgOwnerId ? (
+            <Button
+              onClick={() => setIsEdit(!isEdit)}
+              size={'icon-sm'}
+              variant={'outline'}
+            >
+              {isEdit ? (
+                <XIcon size={12} color="#aaa" />
+              ) : (
+                <Pencil size={12} color="#aaa" />
+              )}
+            </Button>
+          ) : (
+            ''
+          )}
         </CardHeader>
         <CardContent className="flex flex-col gap-x-2">
           <Image

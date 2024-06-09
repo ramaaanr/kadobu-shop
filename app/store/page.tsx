@@ -17,8 +17,11 @@ export default function Page() {
   useEffect(() => {
     if (isAuthLoaded && user) {
       const checkPermissions = async () => {
-        const result = await has({ permission: 'org:store:own' });
-        setCanManage(result);
+        const isCanManage =
+          user.organizationMemberships[0]?.permissions.includes(
+            'org:store:manage',
+          );
+        setCanManage(isCanManage);
         setLoading(false);
       };
       checkPermissions();
@@ -33,13 +36,21 @@ export default function Page() {
     return <div>Please sign in</div>;
   }
 
-  if (!canManage || !orgId) return <Unstore />;
+  if (!canManage) return <Unstore />;
 
   return (
     <>
-      <div className="store-container ml-4 flex gap-x-4 min-h-screen">
-        <StoreDetail orgId={orgId} />
-        <StaffDetail orgId={orgId} />
+      <div className="store-container ml-4 pr-4 flex gap-x-4 min-h-screen">
+        {user?.organizationMemberships?.length > 0 ? (
+          <>
+            <StoreDetail
+              orgId={orgId || user.organizationMemberships[0].organization.id}
+            />
+            <StaffDetail orgId={orgId || user.organizationMemberships[0].id} />
+          </>
+        ) : (
+          <p>No organization memberships found.</p> // Handle the case where there are no memberships
+        )}
       </div>
     </>
   );

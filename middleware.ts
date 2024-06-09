@@ -1,7 +1,9 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import { auth } from '@clerk/nextjs/server';
-import { NextRequest } from 'next/server';
-
+import {
+  clerkClient,
+  clerkMiddleware,
+  createRouteMatcher,
+} from '@clerk/nextjs/server';
+import { NextRequest, NextResponse } from 'next/server';
 const isPublicRoute = createRouteMatcher([
   '/sign-in(.*)',
   '/sign-up(.*)',
@@ -10,20 +12,23 @@ const isPublicRoute = createRouteMatcher([
 
 const isHaveStore = createRouteMatcher(['/', '/product(.*)', '/orders(.*)']);
 
-export default clerkMiddleware((auth, request: NextRequest) => {
+export default clerkMiddleware(async (auth, request: NextRequest) => {
   if (!isPublicRoute(request)) {
     auth().protect();
   }
   if (isHaveStore(request)) {
-    console.log('cek auth');
-    auth().protect(
-      (has) => {
-        return has({ permission: 'org:store:own' });
-      },
-      {
-        unauthorizedUrl: `${new URL('/store', request.url)}`,
-      },
-    );
+    const { userId } = auth();
+    const { data } = await clerkClient.users.getOrganizationMembershipList({
+      userId: userId || '',
+    });
+    if (data[0]) {
+      const role = data[0].role || null;
+      if ((!role && role !== 'org:staff') || (!role && role !== 'org:owner')) {
+        return NextResponse.redirect(new URL('/store', request.url));
+      }
+    } else {
+      return NextResponse.redirect(new URL('/store', request.url));
+    }
   }
 });
 

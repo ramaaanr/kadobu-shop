@@ -1,5 +1,5 @@
 import { API_TOKO, HEADERS } from '@/config/kadobu-api';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
