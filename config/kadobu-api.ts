@@ -3,6 +3,7 @@ const API_PENJUAL = `${BASE_API}/penjual`;
 const API_TOKO = `${BASE_API}/toko`;
 const API_PRODUCT = `${BASE_API}/katalogs`;
 const API_ORDER = `${BASE_API}/order`;
+const API_STATISTIC = `${BASE_API}/statistik`;
 const API_KEY: any = process.env.API_KEY;
 const HEADERS = {
   'x-api-key': API_KEY,
@@ -21,4 +22,5 @@ export {
   HEADERS,
   API_ORDER,
   HEADERS_PUBLIC,
+  API_STATISTIC,
 };

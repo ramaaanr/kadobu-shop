@@ -1,4 +1,9 @@
-import { API_ORDER, HEADERS } from '@/config/kadobu-api';
+import {
+  API_PRODUCT,
+  API_STATISTIC,
+  API_TOKO,
+  HEADERS,
+} from '@/config/kadobu-api';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
@@ -17,28 +22,13 @@ export async function GET(request: Request) {
     );
   }
   const storeId = data[0].organization.id;
-  const response = await fetch(`${API_ORDER}?storeId=${storeId}`, {
+  const year = new Date().getFullYear();
+  const response = await fetch(`${API_STATISTIC}/${storeId}?tahun=${year}`, {
     headers: HEADERS,
     cache: 'no-cache',
   });
   const res = await response.json();
   const status = response.ok ? 200 : 400;
-  return NextResponse.json({ ...res }, { status });
-}
 
-export async function POST(request: Request) {
-  const { kode_produk, total_pesanan } = await request.json();
-  const response = await fetch(`${API_ORDER}?isGuest=true`, {
-    method: 'POST',
-    headers: HEADERS,
-    body: JSON.stringify({
-      kodeProduk: kode_produk,
-      totalPesanan: total_pesanan,
-      keterangan: 'Pembelian Ditempat',
-      idPembeli: 'kadobu-guest',
-    }),
-  });
-  const res = await response.json();
-  const status = response.ok ? 200 : 400;
   return NextResponse.json({ ...res }, { status });
 }

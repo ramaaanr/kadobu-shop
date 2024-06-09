@@ -39,7 +39,14 @@ import {
   AlertDialogAction,
   AlertDialogFooter,
 } from '@/components/ui/alert-dialog';
-
+const fetchOrgId = async () => {
+  const response = await fetch('/api/org-id');
+  if (response.ok) {
+    const { orgId } = await response.json();
+    return orgId;
+  }
+  return '';
+};
 export default function Page({ params }: { params: { id: string } }) {
   const { isLoaded: isAuthLoaded, orgId } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -92,7 +99,7 @@ export default function Page({ params }: { params: { id: string } }) {
     formData.append('deskripsiProduk', data.deskripsiProduk);
     formData.append('status', data.statusProduk);
     formData.append('stokProduk', data.stokProduk.toString());
-    formData.append('idToko', `${orgId}`);
+    formData.append('idToko', `${orgId || (await fetchOrgId())}`);
     formData.append('fotoProduk', data.fotoProduk ? data.fotoProduk[0] : '');
 
     const response = await fetch(`${API_PRODUCT}/${params.id}`, {
@@ -104,6 +111,7 @@ export default function Page({ params }: { params: { id: string } }) {
     });
 
     if (!response.ok) {
+      toast.error('Product Gagal Dirubah');
       throw new Error('Network response was not ok');
     }
 
@@ -114,7 +122,7 @@ export default function Page({ params }: { params: { id: string } }) {
       toast.error('Product Gagal Dirubah');
     } else {
       toast.success('Product Berhasil Dirubah');
-      // router.push('/product');
+      router.push('/product');
     }
   };
 

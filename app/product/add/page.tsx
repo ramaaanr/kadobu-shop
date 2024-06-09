@@ -29,6 +29,14 @@ import { ImagePlus } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 import { API_PRODUCT, HEADERS_PUBLIC } from '@/config/kadobu-api';
 
+const fetchOrgId = async () => {
+  const response = await fetch('/api/org-id');
+  if (response.ok) {
+    const { orgId } = await response.json();
+    return orgId;
+  }
+  return '';
+};
 export default function Page() {
   const { isLoaded: isAuthLoaded, orgId } = useAuth();
   const [preview, setPreview] = useState<string | null>(null);
@@ -55,7 +63,7 @@ export default function Page() {
       formData.append('deskripsiProduk', data.deskripsiProduk);
       formData.append('status', data.statusProduk);
       formData.append('stokProduk', data.stokProduk.toString());
-      formData.append('idToko', `${orgId}`);
+      formData.append('idToko', `${orgId || (await fetchOrgId())}`);
       formData.append('fotoProduk', data.fotoProduk[0]);
 
       const response = await fetch(`${API_PRODUCT}`, {

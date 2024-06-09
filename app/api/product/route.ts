@@ -1,16 +1,23 @@
 import { API_PRODUCT, API_TOKO, HEADERS } from '@/config/kadobu-api';
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const { orgId } = auth();
-  if (!orgId) {
+  const { userId } = auth();
+  if (!userId) {
+    return NextResponse.json({ message: 'User Id Not Found' }, { status: 400 });
+  }
+  const { data } = await clerkClient.users.getOrganizationMembershipList({
+    userId: userId || '',
+  });
+  if (!data || data.length <= 0) {
     return NextResponse.json(
-      { status: false, message: "User don't have a Store" },
+      { message: 'Store Id Not Found' },
       { status: 400 },
     );
   }
-  const response = await fetch(`${API_TOKO}/${orgId}`, {
+  const storeId = data[0].organization.id;
+  const response = await fetch(`${API_TOKO}/${storeId}`, {
     headers: HEADERS,
     cache: 'no-cache',
   });
@@ -27,14 +34,23 @@ export async function GET(request: Request) {
 }
 export async function POST(request: Request) {
   try {
-    const { orgId } = auth();
-    if (!orgId) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json(
-        { status: false, message: "User doesn't have a Store" },
+        { message: 'User Id Not Found' },
         { status: 400 },
       );
     }
-
+    const { data } = await clerkClient.users.getOrganizationMembershipList({
+      userId: userId || '',
+    });
+    if (!data || data.length <= 0) {
+      return NextResponse.json(
+        { message: 'Store Id Not Found' },
+        { status: 400 },
+      );
+    }
+    const storeId = data[0].organization.id;
     const contentType = request.headers.get('content-type');
     if (!contentType || !contentType.includes('multipart/form-data')) {
       return NextResponse.json(
