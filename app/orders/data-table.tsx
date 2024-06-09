@@ -43,7 +43,6 @@ export function DataTable<TData, TValue>({
   const route = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
     data,
     columns,
@@ -53,25 +52,22 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    onRowSelectionChange: setRowSelection,
-    enableMultiRowSelection: false,
     state: {
       sorting,
       columnFilters,
-      rowSelection,
     },
   });
 
   return (
-    <div className="card-container px-8 flex">
+    <div className="card-container px-8">
       <Card x-chunk="dashboard-06-chunk-0">
-        <CardHeader className="w-full">
+        <CardHeader className="w-full mt-4">
           <CardDescription className="flex w-full gap-x-2">
             <Button onClick={() => route.push('/orders/add')}>
               Tambah Pesanan
             </Button>
             <Input
-              placeholder="Kode Produk"
+              placeholder="Kode Pesanan"
               value={
                 (table.getColumn('kode_pesanan')?.getFilterValue() as string) ??
                 ''
