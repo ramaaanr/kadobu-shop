@@ -29,6 +29,7 @@ import { rupiahFormatter } from '@/utils/stringFormatter';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Bar } from 'react-chartjs-2';
+import OrderTable from './(order-table)/order-table';
 
 function generateDataChart(data: number[]) {
   const labels = [
@@ -240,27 +241,32 @@ export default function Page() {
             <CardFooter className="text-gray-500 ">Produk Siap Jual</CardFooter>
           </Card>
         </div>
-        <Card className="w-1/2 mt-4">
-          <CardHeader className="flex mt-4 flex-row items-center justify-between w-full">
-            <div>
-              <div className="font-medium text-primary">
-                Statistik Pendapatan Pertahun
+        <div className="card-bottom-conteiner mt-4 w-full pr-4 flex gap-x-4">
+          <Card className="w-1/2 ">
+            <CardHeader className="flex mt-4 flex-row items-center justify-between w-full">
+              <div>
+                <div className="font-medium text-primary">
+                  Statistik Pendapatan Pertahun
+                </div>
+                <div className="text-gray-300 text-xs">
+                  {`Pertahun `}
+                  {year}
+                </div>
               </div>
-              <div className="text-gray-300 text-xs">
-                {`Pertahun `}
-                {year}
-              </div>
-            </div>
-            <BarChart size={30} color="#372948" />
-          </CardHeader>
-          <CardContent className="h-[350px]">
-            {dataPenjualan ? (
-              <Bar options={options} data={dataPenjualan} />
-            ) : (
-              ''
-            )}
-          </CardContent>
-        </Card>
+              <BarChart size={30} color="#372948" />
+            </CardHeader>
+            <CardContent className="h-[350px]">
+              {dataPenjualan ? (
+                <Bar options={options} data={dataPenjualan} />
+              ) : (
+                ''
+              )}
+            </CardContent>
+          </Card>
+          <div className="w-1/2">
+            <OrderTable />
+          </div>
+        </div>
       </div>
     </>
   );
