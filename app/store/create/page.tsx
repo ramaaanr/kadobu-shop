@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOrganizationList } from '@clerk/nextjs';
 import { UserMembershipParams } from '@/utils/organizations';
 import { Button } from '@/components/ui/button';
@@ -24,8 +24,10 @@ import { ImagePlus } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 import { API_TOKO } from '@/config/kadobu-api';
 import Loading from '../loading';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function Page() {
+  const [loading, setLoading] = useState(true);
   const {
     isLoaded: isOrganizationLoaded,
     createOrganization,
@@ -42,20 +44,38 @@ export default function Page() {
       namaToko: '',
       deskripsiToko: '',
       alamatToko: '',
+      teleponToko: '',
+      lokasiToko: '',
       fotoToko: undefined,
     },
   });
 
-  if (orgId) {
-    router.push('/store');
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('/api/org-id');
+      if (response.ok) {
+        toast.success('Anda Sudah Terdaftar mengelola toko');
+        return router.push('/store');
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       if (!isOrganizationLoaded || !isUserLoaded) {
         return null;
       }
-      const { namaToko, deskripsiToko, fotoToko, alamatToko } = data;
+      const {
+        namaToko,
+        deskripsiToko,
+        fotoToko,
+        alamatToko,
+        teleponToko,
+        lokasiToko,
+      } = data;
       setSubmitting(true);
       const organization = await createOrganization({
         name: namaToko,
@@ -69,6 +89,8 @@ export default function Page() {
       formData.append('namaToko', namaToko);
       formData.append('deskripsiToko', deskripsiToko);
       formData.append('alamatToko', alamatToko);
+      formData.append('teleponToko', teleponToko);
+      formData.append('lokasiToko', lokasiToko);
       formData.append('idPenjual', `${userId}`);
       formData.append('fotoProfil', fotoToko[0]);
       setSubmitting(true);
@@ -79,8 +101,11 @@ export default function Page() {
         },
         body: formData,
       });
-      toast.success('Toko Berhasil Dibuat');
-      router.push('/store');
+      if (res.ok) {
+        toast.success('Toko Berhasil Dibuat');
+        return router.push('/store');
+      }
+      toast.error('Toko Gagal Dibuat');
     } catch (error: any) {
       console.log(error.message);
       toast.error('Toko Gagal Dibuat');
@@ -88,6 +113,9 @@ export default function Page() {
       setSubmitting(false);
     }
   };
+
+  if (loading) return <Loading />;
+
   if (isUserLoaded && isOrganizationLoaded)
     return (
       <>
@@ -134,11 +162,11 @@ export default function Page() {
                 name="deskripsiToko"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs">Nama Toko</FormLabel>
+                    <FormLabel className="text-xs">Deskripsi Toko</FormLabel>
                     <FormControl>
-                      <Input
+                      <Textarea
                         disabled={isSubmitting}
-                        className="mt-0"
+                        className="mt-0 resize-none"
                         placeholder="Deskripsi"
                         {...field}
                       />
@@ -158,6 +186,44 @@ export default function Page() {
                         disabled={isSubmitting}
                         className="mt-0"
                         placeholder="Alamat"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="teleponToko"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Telepon Toko</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isSubmitting}
+                        className="mt-0"
+                        placeholder="08xxxxxxxxxx"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lokasiToko"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">
+                      Share Location Toko
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isSubmitting}
+                        className="mt-0"
+                        placeholder="https://maps.app.goo.gl/XxXxxXxx"
                         {...field}
                       />
                     </FormControl>

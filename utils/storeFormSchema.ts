@@ -9,9 +9,41 @@ const ACCEPTED_IMAGE_TYPES: string[] = [
 ];
 
 export const formSchema = z.object({
-  namaToko: z.string().min(5).max(50),
-  deskripsiToko: z.string().min(15).max(500),
-  alamatToko: z.string().min(15).max(50),
+  namaToko: z
+    .string()
+    .min(5, {
+      message: 'Nama Toko Harus Lebih dari 5 Huruf',
+    })
+    .max(50, {
+      message: 'Nama Toko Harus Kurang dari 50 Huruf',
+    }),
+  deskripsiToko: z
+    .string()
+    .min(15, {
+      message: 'Nama Toko Harus Lebih dari 15 Huruf',
+    })
+    .max(500, {
+      message: 'Nama Toko Harus Kurang dari 500 Huruf',
+    }),
+  alamatToko: z
+    .string()
+    .min(15, {
+      message: 'Nama Toko Harus Lebih dari 15 Huruf',
+    })
+    .max(100, {
+      message: 'Nama Toko Harus Kurang dari 100 Huruf',
+    }),
+  teleponToko: z.string().regex(/^(?:\+62|62|0)8[1-9][0-9]{6,10}$/, {
+    message: 'Nomor Tidak Sesuai Format',
+  }),
+  lokasiToko: z
+    .string()
+    .regex(
+      /^(https?:\/\/)?(www\.)?(google\.com\/maps|goo\.gl\/maps|maps\.app\.goo\.gl)\/[a-zA-Z0-9@:%._\+~#=]{2,256}$/,
+      {
+        message: 'Format Google Map Tidak Sesuai',
+      },
+    ),
   fotoToko: z
     .any()
     .refine(

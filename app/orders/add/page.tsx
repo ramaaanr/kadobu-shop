@@ -89,7 +89,7 @@ export default function Page() {
       toast.error('Penambahan Pesanan gagal');
       console.log(res.message);
     } else {
-      toast.success('Pemnambahan Pesanan Berhasil');
+      toast.success('Penambahan Pesanan Berhasil');
       router.push('/orders');
     }
   };
