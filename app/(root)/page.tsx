@@ -191,7 +191,8 @@ export default function Page() {
               {rupiahFormatter(totalPenjualan)}
             </CardContent>
             <CardFooter className="text-gray-500 ">
-              {persentasePenjualan === Infinity
+              {persentasePenjualan === Infinity ||
+              Number.isNaN(persentasePenjualan)
                 ? 'Total Bulan Sebelumnya Tidak Ada'
                 : persentasePenjualan < 0
                 ? `${
@@ -215,7 +216,8 @@ export default function Page() {
               {totalPesanan}
             </CardContent>
             <CardFooter className="text-gray-500 ">
-              {persentasePesanan === Infinity
+              {persentasePesanan === Infinity ||
+              Number.isNaN(persentasePenjualan)
                 ? 'Total Bulan Sebelumnya Tidak Ada'
                 : persentasePesanan < 0
                 ? `${
@@ -236,7 +238,7 @@ export default function Page() {
               <Flower2 size={30} color="#372948" />
             </CardHeader>
             <CardContent className="font-bold text-3xl text-primary py-0 pb-2">
-              {totalProduk}
+              {totalProduk || 0}
             </CardContent>
             <CardFooter className="text-gray-500 ">Produk Siap Jual</CardFooter>
           </Card>
