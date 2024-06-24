@@ -9,7 +9,6 @@ export default function Layout({
   modal,
 }: {
   children: React.ReactNode;
-  analytics: React.ReactNode;
   modal: React.ReactNode;
 }) {
   return (

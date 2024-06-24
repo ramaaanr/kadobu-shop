@@ -37,6 +37,7 @@ const fetchOrgId = async () => {
   }
   return '';
 };
+
 export default function Page() {
   const { isLoaded: isAuthLoaded, orgId } = useAuth();
   const [preview, setPreview] = useState<string | null>(null);
@@ -93,6 +94,7 @@ export default function Page() {
       toast.error('Product Gagal Ditambahkan');
     }
   };
+
   return (
     <>
       <div className="form-container flex gap-x-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
@@ -226,6 +228,37 @@ export default function Page() {
             />
             <FormField
               control={form.control}
+              name="idKategori"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs">Kategori Produk</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value.toString()}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pilih Kategori" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="0">Lainnya</SelectItem>
+                        <SelectItem value="1">Snack</SelectItem>
+                        <SelectItem value="2">Bunga</SelectItem>
+                        <SelectItem value="3">Boneka</SelectItem>
+                        <SelectItem value="4">Balon</SelectItem>
+                        <SelectItem value="5">Uang</SelectItem>
+                        <SelectItem value="6">Foto</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="idToko"
               render={({ field }) => (
                 <FormItem className="hidden">
@@ -236,7 +269,7 @@ export default function Page() {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
+            <Button className="w-full mt-8" type="submit">
               Submit
             </Button>
           </form>
