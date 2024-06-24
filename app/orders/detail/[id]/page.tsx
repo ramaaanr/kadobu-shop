@@ -281,6 +281,14 @@ export default function Page({ params }: { params: { id: string } }) {
                       : 'Belum Dibayar'}
                   </div>
                 </div>
+
+                <Separator className="my-2" />
+                <div className="label font-semibold text-sm">Catatan</div>
+                <div className="detail-row flex">
+                  <div className="detail text-sm text-gray-500 w-full">
+                    {data.catatan}
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>

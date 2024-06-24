@@ -51,6 +51,7 @@ export default function Page() {
       statusProduk: '',
       idToko: 1,
       fotoProduk: undefined,
+      idKategori: 0,
     },
   });
 
@@ -64,6 +65,7 @@ export default function Page() {
       formData.append('status', data.statusProduk);
       formData.append('stokProduk', data.stokProduk.toString());
       formData.append('idToko', `${orgId || (await fetchOrgId())}`);
+      formData.append('idKategori', data.idKategori.toString());
       formData.append('fotoProduk', data.fotoProduk[0]);
 
       const response = await fetch(`${API_PRODUCT}`, {

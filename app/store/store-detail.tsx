@@ -7,8 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { API_TOKO, BASE_API } from '@/config/kadobu-api';
 import { useAuth } from '@clerk/nextjs';
-import { Pencil, PenIcon, Store, XIcon } from 'lucide-react';
+import { Copy, Pencil, PenIcon, Store, XIcon } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { MoonLoader } from 'react-spinners';
 import { toast } from 'sonner';
@@ -20,6 +21,8 @@ interface Store {
   nama_toko: string;
   deskripsi_toko?: string;
   alamat_toko: string;
+  telepon_toko: string;
+  lokasi_toko: string;
   foto_profil: string;
 }
 
@@ -30,6 +33,8 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
   const [namaToko, setNamaToko] = useState('');
   const [alamatToko, setAlamatToko] = useState('');
   const [deskripsiToko, setDeskripsiToko] = useState('');
+  const [teleponToko, setTeleponToko] = useState('');
+  const [lokasiToko, setLokasiToko] = useState('');
   const [store, setStore] = useState<Store | null>(null);
   const [fotoToko, setFotoToko] = useState<FileList | null>(null);
   const [previewFotoToko, setPreviewFotoToko] = useState('');
@@ -43,6 +48,8 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
       setNamaToko(result.nama_toko);
       setAlamatToko(result.alamat_toko);
       setDeskripsiToko(result.deskripsi_toko);
+      setLokasiToko(result.lokasi_toko);
+      setTeleponToko(result.telepon_toko);
       setPreviewFotoToko(`${BASE_API}/store_images/${result.foto_profil}`);
       setLoading(false);
     } else {
@@ -67,6 +74,18 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
       toast.warning('Deskripsi Toko Harus Lebih dari 15 dan Kurang dari 500');
       return null;
     }
+    if (!/^(?:\+62|62|0)8[1-9][0-9]{6,10}$/.test(teleponToko)) {
+      toast.warning('Nomor Tidak Sesuai Format');
+      return null;
+    }
+    if (
+      !/^(https?:\/\/)?(www\.)?(google\.com\/maps|goo\.gl\/maps|maps\.app\.goo\.gl)\/[a-zA-Z0-9@:%._\+~#=]{2,256}$/.test(
+        lokasiToko,
+      )
+    ) {
+      toast.warning('Format Google Map Tidak Sesuai');
+      return null;
+    }
     if (fotoToko) {
       if (fotoToko?.[0]?.size > 2000000) {
         toast.warning('Foto profil harus kurang dari 2MB');
@@ -86,6 +105,8 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
     formData.append('namaToko', namaToko);
     formData.append('alamatToko', alamatToko);
     formData.append('deskripsiToko', deskripsiToko);
+    formData.append('teleponToko', teleponToko);
+    formData.append('lokasiToko', lokasiToko);
     formData.append('fotoProfil', fotoToko ? fotoToko[0] : '');
     const response = await fetch(`${API_TOKO}/${orgId}`, {
       method: 'PATCH',
@@ -110,6 +131,8 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
         nama_toko: namaToko,
         alamat_toko: alamatToko,
         deskripsi_toko: deskripsiToko,
+        telepon_toko: teleponToko,
+        lokasi_toko: lokasiToko,
         foto_profil: previewFotoToko,
       });
     }
@@ -119,7 +142,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
 
   if (loading || !store)
     return (
-      <Card className="w-96 h-fit">
+      <Card className="w-[298px] h-fit">
         <CardHeader className="flex flex-row gap-x-2 items-center">
           <Store size={24} />
           <div className="text-2xl w-fit font-semibold text-primary">
@@ -138,6 +161,10 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
             <p className="text-xs font-semibold">Alamat Toko</p>
             <Skeleton className="w-full h-6 mb-2" />
             <p className="text-xs font-semibold">Deskripsi</p>
+            <Skeleton className="w-2/3 h-6 mb-2" />
+            <p className="text-xs font-semibold">No WA</p>
+            <Skeleton className="w-1/2 h-6 mb-2" />
+            <p className="text-xs font-semibold">Share Location</p>
             <Skeleton className="w-1/3 h-6" />
           </div>
         </CardContent>
@@ -145,7 +172,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
     );
   return (
     <>
-      <Card className="w-96 h-fit">
+      <Card className="w-[298px] h-fit">
         <CardHeader className="flex flex-row gap-x-2 items-center">
           <Store size={24} />
           <div className="text-2xl w-fit font-semibold text-primary">
@@ -172,7 +199,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
             alt={store.nama_toko}
             height={250}
             width={250}
-            className="rounded-lg"
+            className=" w-64 h-64 rounded-lg"
             src={
               isEdit
                 ? previewFotoToko
@@ -235,6 +262,71 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
             ) : (
               <p className="text-gray-400 pl-1 mb-2">{store.deskripsi_toko}</p>
             )}
+
+            <p className="text-xs font-semibold">No WA</p>
+            {isEdit ? (
+              <Input
+                onChange={(e) => {
+                  setTeleponToko(e.target.value);
+                }}
+                type="text"
+                value={teleponToko}
+                className="mb-2"
+              />
+            ) : (
+              <div className="flex  pl-1">
+                <Link
+                  target="_blank"
+                  className="text-gray-400  hover:text-gray-800 mr-2"
+                  href={store.telepon_toko.replace(/^0/, 'https://wa.me/62')}
+                >
+                  {store.telepon_toko}
+                </Link>
+                <Button
+                  variant={'outline'}
+                  size={'icon-sm'}
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${store.telepon_toko}`);
+                    toast.success('Telepon Berhasil Disalin');
+                  }}
+                >
+                  <Copy size={16} />
+                </Button>
+              </div>
+            )}
+
+            <p className="text-xs font-semibold">Share Location</p>
+            {isEdit ? (
+              <Input
+                onChange={(e) => {
+                  setLokasiToko(e.target.value);
+                }}
+                type="text"
+                value={lokasiToko}
+                className="mb-2"
+              />
+            ) : (
+              <div className="flex  pl-1">
+                <Link
+                  target={'_blank'}
+                  className="text-gray-400  hover:text-gray-800 mr-2"
+                  href={store.lokasi_toko}
+                >
+                  Lokasi
+                </Link>
+                <Button
+                  variant={'outline'}
+                  size={'icon-sm'}
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${store.lokasi_toko}`);
+                    toast.success('Lokasi Berhasil Disalin');
+                  }}
+                >
+                  <Copy size={16} />
+                </Button>
+              </div>
+            )}
+
             {isEdit ? (
               <Button onClick={editHandler} className="w-full">
                 Simpan

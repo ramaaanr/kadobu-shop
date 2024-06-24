@@ -28,6 +28,7 @@ export interface Order {
   nama_produk: string;
   foto_produk: string;
   id_pembeli: string;
+  catatan: string;
   username: string;
   email: string;
 }

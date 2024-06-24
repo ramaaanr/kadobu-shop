@@ -14,8 +14,5 @@ export async function GET(
   if (status === 200) {
     delete res.result.katalog;
   }
-  return NextResponse.json(
-    { ...res, url: `${API_TOKO}/${params.id}` },
-    { status },
-  );
+  return NextResponse.json({ ...res }, { status });
 }
