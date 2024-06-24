@@ -9,6 +9,7 @@ const ACCEPTED_IMAGE_TYPES: string[] = [
 ];
 
 const formSchema = z.object({
+  idKategori: z.string(),
   namaProduk: z.string().min(2).max(50),
   hargaProduk: z
     .any()

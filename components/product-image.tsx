@@ -16,14 +16,16 @@ const ProductImage: React.FC<ProductImageProps> = ({
   );
 
   return (
-    <Image
-      width={width}
-      height={height}
-      className="rounded-lg"
-      src={imgSrc}
-      alt="foto_produk"
-      onError={() => setImgSrc('/images/product-image-not-found.png')}
-    />
+    <div className={`image-container relative w-[${width}px] h-[${height}px]`}>
+      <Image
+        className="rounded-lg"
+        src={imgSrc}
+        alt="Logo"
+        fill
+        objectFit="cover"
+        objectPosition="center"
+      />
+    </div>
   );
 };
 

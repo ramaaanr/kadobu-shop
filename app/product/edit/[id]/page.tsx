@@ -39,6 +39,8 @@ import {
   AlertDialogAction,
   AlertDialogFooter,
 } from '@/components/ui/alert-dialog';
+import ProductImage from '@/components/product-image';
+
 const fetchOrgId = async () => {
   const response = await fetch('/api/org-id');
   if (response.ok) {
@@ -47,9 +49,18 @@ const fetchOrgId = async () => {
   }
   return '';
 };
+
+const categoryMapping: { [key: string]: string } = {
+  '0': 'Lainnya',
+  '1': 'Snack',
+  '2': 'Bunga',
+  '3': 'Boneka',
+  '4': 'Balon',
+};
+
 export default function Page({ params }: { params: { id: string } }) {
   const { isLoaded: isAuthLoaded, orgId } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [preview, setPreview] = useState<string>('');
   const [error, setError] = useState(false);
 
@@ -64,6 +75,7 @@ export default function Page({ params }: { params: { id: string } }) {
       statusProduk: '',
       idToko: 1,
       fotoProduk: undefined,
+      idKategori: '0',
     },
   });
 
@@ -81,6 +93,7 @@ export default function Page({ params }: { params: { id: string } }) {
           statusProduk: data.status_produk,
           idToko: 1,
           fotoProduk: undefined,
+          idKategori: data.id_kategori.toString(),
         });
         setPreview(`${BASE_API}/product_images/${data.foto_produk}`);
         setLoading(false);
@@ -89,10 +102,11 @@ export default function Page({ params }: { params: { id: string } }) {
       }
     };
     fetchData();
-  }, []);
+  }, [params.id]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (!isAuthLoaded) return null;
+    setLoading(true);
     const formData = new FormData();
     formData.append('namaProduk', data.namaProduk);
     formData.append('hargaProduk', data.hargaProduk.toString());
@@ -100,6 +114,7 @@ export default function Page({ params }: { params: { id: string } }) {
     formData.append('status', data.statusProduk);
     formData.append('stokProduk', data.stokProduk.toString());
     formData.append('idToko', `${orgId || (await fetchOrgId())}`);
+    formData.append('idKategori', data.idKategori.toString());
     formData.append('fotoProduk', data.fotoProduk ? data.fotoProduk[0] : '');
 
     const response = await fetch(`${API_PRODUCT}/${params.id}`, {
@@ -110,6 +125,7 @@ export default function Page({ params }: { params: { id: string } }) {
       body: formData,
     });
 
+    setLoading(false);
     if (!response.ok) {
       toast.error('Product Gagal Dirubah');
       throw new Error('Network response was not ok');
@@ -118,7 +134,6 @@ export default function Page({ params }: { params: { id: string } }) {
     const responseData = await response.json();
 
     if (responseData.errors) {
-      // const errors = responseData.errors;
       toast.error('Product Gagal Dirubah');
     } else {
       toast.success('Product Berhasil Dirubah');
@@ -143,13 +158,16 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <>
       <div className="form-container flex gap-x-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
-        <Image
-          className="rounded-lg"
-          width={'330'}
-          alt={'gambar'}
-          height={'440'}
-          src={preview}
-        />
+        <div className={`image-container relative w-[330px] h-[440px]`}>
+          <Image
+            className="rounded-lg"
+            src={preview}
+            alt="Logo"
+            fill
+            objectFit="cover"
+            objectPosition="center"
+          />
+        </div>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -260,6 +278,37 @@ export default function Page({ params }: { params: { id: string } }) {
                       }}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="idKategori"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs">Kategori Produk</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value.toString()}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={categoryMapping[field.value.toString()]}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="0">Lainnya</SelectItem>
+                        <SelectItem value="1">Snack</SelectItem>
+                        <SelectItem value="2">Bunga</SelectItem>
+                        <SelectItem value="3">Boneka</SelectItem>
+                        <SelectItem value="4">Balon</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

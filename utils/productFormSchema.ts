@@ -10,7 +10,7 @@ const ACCEPTED_IMAGE_TYPES: string[] = [
 
 const formSchema = z.object({
   namaProduk: z.string().min(2).max(50),
-  idKategori: z.number(),
+  idKategori: z.string(),
   hargaProduk: z
     .any()
     .refine((val) => !isNaN(Number(val)), {

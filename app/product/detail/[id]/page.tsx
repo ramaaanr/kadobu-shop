@@ -104,6 +104,13 @@ export default function Page({ params }: { params: { id: string } }) {
             </p>
           </div>
           <div className="property-container flex">
+            <p className="text-xs text-gray-600 w-28">Kategori</p>
+            <p className="text-xs text-gray-600 mr-2">:</p>
+            <p className="text-xs font-semibold w-full">
+              {product.nama_kategori}
+            </p>
+          </div>
+          <div className="property-container flex">
             <p className="text-xs text-gray-600 w-28">Deskripsi</p>
             <p className="text-xs text-gray-600 mr-2">:</p>
             <p className="text-xs font-semibold w-full">

@@ -9,6 +9,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { API_PRODUCT } from '@/config/kadobu-api';
 import ProductImage from '@/components/product-image';
 interface ProductProps {
+  id_kategori: number;
+  nama_kategori: string;
   kode_produk: string;
   nama_produk: string;
   deskripsi_produk: string;
@@ -117,6 +119,13 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className="text-xs text-gray-600 mr-2">:</p>
               <p className="text-xs font-semibold w-full">
                 {rupiahFormatter(product.harga_produk)}
+              </p>
+            </div>
+            <div className="property-container flex">
+              <p className="text-xs text-gray-600 w-28">Kategori</p>
+              <p className="text-xs text-gray-600 mr-2">:</p>
+              <p className="text-xs font-semibold w-full">
+                {product.nama_kategori}
               </p>
             </div>
             <div className="property-container flex">

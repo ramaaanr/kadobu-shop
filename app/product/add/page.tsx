@@ -41,6 +41,7 @@ const fetchOrgId = async () => {
 export default function Page() {
   const { isLoaded: isAuthLoaded, orgId } = useAuth();
   const [preview, setPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,12 +53,13 @@ export default function Page() {
       statusProduk: '',
       idToko: 1,
       fotoProduk: undefined,
-      idKategori: 0,
+      idKategori: '0',
     },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (!isAuthLoaded) return null;
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append('namaProduk', data.namaProduk);
@@ -84,7 +86,6 @@ export default function Page() {
       const responseData = await response.json();
 
       if (responseData.errors) {
-        // const errors = responseData.errors;
         toast.error('Product Gagal Ditambahkan');
       } else {
         toast.success('Product Berhasil Ditambahkan');
@@ -92,6 +93,8 @@ export default function Page() {
       }
     } catch (error) {
       toast.error('Product Gagal Ditambahkan');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,7 +127,12 @@ export default function Page() {
                 <FormItem>
                   <FormLabel className="text-xs">Nama Produk</FormLabel>
                   <FormControl>
-                    <Input className="mt-0" placeholder="Produk" {...field} />
+                    <Input
+                      className="mt-0"
+                      placeholder="Produk"
+                      {...field}
+                      disabled={loading}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,7 +145,11 @@ export default function Page() {
                 <FormItem>
                   <FormLabel className="text-xs">Deskripsi Produk</FormLabel>
                   <FormControl>
-                    <Input placeholder="Deskripsi" {...field} />
+                    <Input
+                      placeholder="Deskripsi"
+                      {...field}
+                      disabled={loading}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -150,7 +162,12 @@ export default function Page() {
                 <FormItem>
                   <FormLabel className="text-xs">Stok Produk</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="999" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="999"
+                      {...field}
+                      disabled={loading}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -163,7 +180,12 @@ export default function Page() {
                 <FormItem>
                   <FormLabel className="text-xs">Harga Produk</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="Rp0" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Rp0"
+                      {...field}
+                      disabled={loading}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -178,10 +200,11 @@ export default function Page() {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    disabled={loading}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Plih Status" />
+                        <SelectValue placeholder="Pilih Status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -220,6 +243,7 @@ export default function Page() {
                           setPreview(URL.createObjectURL(image));
                         }
                       }}
+                      disabled={loading}
                     />
                   </FormControl>
                   <FormMessage />
@@ -235,6 +259,7 @@ export default function Page() {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value.toString()}
+                    disabled={loading}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -269,8 +294,8 @@ export default function Page() {
                 </FormItem>
               )}
             />
-            <Button className="w-full mt-8" type="submit">
-              Submit
+            <Button className="w-full mt-8" type="submit" disabled={loading}>
+              {loading ? 'Submitting...' : 'Submit'}
             </Button>
           </form>
         </Form>
