@@ -40,6 +40,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Badge, OrderStatusBadge } from '@/components/ui/badge';
 import Loading from '../../loading';
+import { useRouter } from 'next/navigation';
 
 interface statusKet {
   status: string;
@@ -47,6 +48,7 @@ interface statusKet {
 }
 
 export default function Page({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const [data, setData] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -112,6 +114,14 @@ export default function Page({ params }: { params: { id: string } }) {
         <div className="w-full px-4">
           <Card className="md:w-2/5 w-full  mx-auto">
             <CardHeader>
+              <Button
+                className="hidden md:block w-fit"
+                size={'sm'}
+                variant={'outline'}
+                onClick={() => router.back()}
+              >
+                Kembali
+              </Button>
               <div className="card-header-container flex gap-x-4 ">
                 <div className={`image-container relative w-[75px] h-[75px]`}>
                   <Image
@@ -137,7 +147,8 @@ export default function Page({ params }: { params: { id: string } }) {
                       <div className="">Status</div>
                       <OrderStatusBadge prevData={prevData} />
 
-                      {data.status === 'PENDING' ? (
+                      {data.status === 'PENDING' ||
+                      data.status === 'CANCELED' ? (
                         ''
                       ) : (
                         <AlertDialog>

@@ -8,7 +8,6 @@ import {
   Title,
   Tooltip,
   Legend,
-  scales,
 } from 'chart.js';
 import { useEffect, useState } from 'react';
 import Loading from './loading';
@@ -23,7 +22,6 @@ import {
   CircleDollarSign,
   ClipboardCheck,
   Flower2,
-  Router,
 } from 'lucide-react';
 import { rupiahFormatter } from '@/utils/stringFormatter';
 import { Button } from '@/components/ui/button';
@@ -51,7 +49,7 @@ function generateDataChart(data: number[]) {
     labels,
     datasets: [
       {
-        label: 'Total Pedapatan',
+        label: 'Total Pendapatan',
         data: data,
         backgroundColor: '#372948',
       },
@@ -156,14 +154,14 @@ export default function Page() {
 
   return (
     <>
-      <div className="dashboard-container md:ml-12 w-screen gap-x-4 px-6 pt-16 md:mt-0 md:pr-32  ">
+      <div className="dashboard-container md:ml-12 w-screen gap-x-4 px-6 pt-16 md:mt-0 md:pr-32 overflow-x-hidden">
         <div className="card-container w-full gap-x-4 gap-y-4 flex flex-col md:grid md:grid-cols-2 xl:grid-cols-4 ">
           <Card className="w-full h-[205px]">
             <CardHeader className="font-bold text-3xl text-primary pt-4 pb-0 ">
               Buat Pesanan
             </CardHeader>
             <CardContent className="font-medium text-primary py-0 pb-2">
-              catat pesanan kustomer dengan cepat
+              Catat pesanan kustomer dengan cepat
             </CardContent>
             <CardFooter className="text-gray-500 ">
               <Button onClick={() => router.push('/orders/add')}>
@@ -238,8 +236,8 @@ export default function Page() {
             <CardFooter className="text-gray-500 ">Produk Siap Jual</CardFooter>
           </Card>
         </div>
-        <div className="card-bottom-conteiner mt-4 w-screen flex  pr-12 md:pr-40 flex-col gap-y-4 md:flex-row gap-x-4">
-          <Card className="w-full md:w-1/2 ">
+        <div className="card-bottom-conteiner mt-4 w-full flex flex-col gap-y-4 md:flex-row gap-x-4  overflow-x-hidden">
+          <Card className="w-full md:w-1/2">
             <CardHeader className="flex mt-4 flex-row items-center justify-between w-full">
               <div>
                 <div className="font-medium text-primary">
@@ -260,7 +258,7 @@ export default function Page() {
               )}
             </CardContent>
           </Card>
-          <div className="w-full md:w-1/2">
+          <div className="w-full md:w-1/2 overflow-x-auto">
             <OrderTable />
           </div>
         </div>

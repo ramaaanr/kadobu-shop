@@ -11,7 +11,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'Kadobu Store',
+  title: 'Kadobu Store: Jual Kado Buket Dengan Mudah',
   description: 'Web Application for selling bouquet',
 };
 

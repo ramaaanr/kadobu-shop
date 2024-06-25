@@ -6,11 +6,18 @@ import {
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
-} from '@radix-ui/react-tooltip';
-import { Home, ShoppingCart, Gift, Store } from 'lucide-react';
+} from '@/components/ui/tooltip';
+import {
+  Home,
+  ShoppingCart,
+  Gift,
+  Store,
+  Plus,
+  ScrollText,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ClipLoader } from 'react-spinners';
 
 // Konfigurasi font
@@ -33,10 +40,12 @@ const Sidebar = () => {
         ? 'bg-accent text-accent-foreground hover:text-foreground'
         : 'text-muted-foreground hover:text-foreground'
     }`;
+  useEffect(() => {
+    setLoading(false);
+  }, [pathname]);
 
   const handleClick = (href: string) => {
     setLoading(true);
-    router.push(href);
   };
 
   return (
@@ -64,7 +73,11 @@ const Sidebar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href="/" className={navItemClass('dashboard')}>
+                <Link
+                  href="/"
+                  className={navItemClass('')}
+                  onClick={() => handleClick('/')}
+                >
                   <Home className="h-5 w-5" />
                   <span className="sr-only">Dashboard</span>
                 </Link>
@@ -75,7 +88,11 @@ const Sidebar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href="/orders" className={navItemClass('orders')}>
+                <Link
+                  href="/orders"
+                  className={navItemClass('orders')}
+                  onClick={() => handleClick('/orders')}
+                >
                   <ShoppingCart className="h-5 w-5" />
                   <span className="sr-only">Orders</span>
                 </Link>
@@ -86,7 +103,11 @@ const Sidebar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href="/product" className={navItemClass('product')}>
+                <Link
+                  href="/product"
+                  className={navItemClass('product')}
+                  onClick={() => handleClick('/product')}
+                >
                   <Gift className="h-5 w-5" />
                   <span className="sr-only">Products</span>
                 </Link>
@@ -97,7 +118,11 @@ const Sidebar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href="/store" className={navItemClass('store')}>
+                <Link
+                  href="/store"
+                  className={navItemClass('store')}
+                  onClick={() => handleClick('/store')}
+                >
                   <Store className="h-5 w-5" />
                   <span className="sr-only">Store</span>
                 </Link>
@@ -127,6 +152,15 @@ const Sidebar = () => {
             <ShoppingCart className="h-6 w-6" />
             <span className="sr-only">Orders</span>
           </Link>
+          <Link
+            href="/orders/add"
+            className="rounded-full bg-primary p-4"
+            onClick={() => handleClick('/orders/add')}
+          >
+            <ScrollText className="h-8 w-8  text-white" />
+            <span className="sr-only">Add Orders</span>
+          </Link>
+
           <Link
             href="/product"
             className={navItemClass('product')}
