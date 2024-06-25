@@ -22,7 +22,7 @@ import { useEffect, useState } from 'react';
 import orderStatus from '@/config/order-status';
 import { PencilIcon } from 'lucide-react';
 import Image from 'next/image';
-import { BASE_API } from '@/config/kadobu-api';
+import { API_PRODUCT_IMAGES, BASE_API } from '@/config/kadobu-api';
 import {
   AlertDialogHeader,
   AlertDialogFooter,
@@ -55,7 +55,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`/api/order/${params.id}`);
+      const response = await fetch(`/api/keranjang/${params.id}`);
       if (!response.ok) {
         setError(true);
       }
@@ -82,7 +82,7 @@ export default function Page({ params }: { params: { id: string } }) {
   };
 
   const updateHandler = async () => {
-    const response = await fetch(`/api/order/${params.id}`, {
+    const response = await fetch(`/api/keranjang/${data?.id_keranjang}`, {
       method: 'PUT',
       body: JSON.stringify({
         status,
@@ -111,13 +111,14 @@ export default function Page({ params }: { params: { id: string } }) {
         <Card className="w-2/5 mx-auto">
           <CardHeader>
             <div className="card-header-container flex gap-x-4 ">
-              <div>
+              <div className={`image-container relative w-[75px] h-[75px]`}>
                 <Image
-                  src={`${BASE_API}/product_images/${data.foto_produk}`}
+                  src={`${API_PRODUCT_IMAGES}/${data.foto_produk}`}
                   alt={data.nama_produk}
-                  height={75}
-                  width={75}
                   className="rounded-lg"
+                  fill
+                  objectFit="cover"
+                  objectPosition="center"
                 />
               </div>
               <div>
@@ -200,7 +201,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <div className="product-container w-full">
                 <div className="label font-semibold text-sm">Detail</div>
                 <div className="detail-row flex">
-                  <div className="detail text-sm text-gray-500 w-full">{`${data.nama_produk} x ${data.total_pesanan}`}</div>
+                  <div className="detail text-sm text-gray-500 w-full">{`${data.nama_produk} x ${data.jumlah_pesanan}`}</div>
                   <div className="number text-right w-24 text-sm">
                     {rupiahFormatter(data.total_harga)}
                   </div>
@@ -238,7 +239,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <Separator className="my-2" />
 
               <div className="payment-container w-full">
-                {data.id_pembeli === 'kadobu-guest' ? (
+                {data.username === 'kadobu-guest' ? (
                   <>
                     <div className="label font-semibold text-sm">Pembeli</div>
                     <div className="detail-row flex">

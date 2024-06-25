@@ -27,15 +27,14 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { kode_produk, total_pesanan } = await request.json();
+  const formData = await request.json();
   const response = await fetch(`${API_ORDER}?isGuest=true`, {
     method: 'POST',
     headers: HEADERS,
     body: JSON.stringify({
-      kodeProduk: kode_produk,
-      totalPesanan: total_pesanan,
-      keterangan: 'Pembelian Ditempat',
       idPembeli: 'kadobu-guest',
+      listKeranjang: [],
+      ...formData,
     }),
   });
   const res = await response.json();

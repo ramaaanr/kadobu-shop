@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Card,
   CardContent,
@@ -31,6 +32,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
+
 interface Product {
   kode_produk: string;
   nama_produk: string;
@@ -40,6 +42,7 @@ interface Product {
   status_produk: string;
   foto_produk: string;
 }
+
 export default function Page() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -48,6 +51,8 @@ export default function Page() {
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
+  const [catatan, setCatatan] = useState('');
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch('/api/product');
@@ -82,6 +87,7 @@ export default function Page() {
       body: JSON.stringify({
         kode_produk: product.kode_produk,
         total_pesanan: quantity,
+        catatan: catatan,
       }),
     });
     const res = await response.json();
@@ -112,7 +118,6 @@ export default function Page() {
             <SelectContent className="">
               <SelectGroup>
                 <SelectLabel>Pilih Produk Anda</SelectLabel>
-                {}
                 {products.map((product) => (
                   <SelectItem
                     key={product.kode_produk}
@@ -148,7 +153,7 @@ export default function Page() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <div className="counter-containe w-full mt-4 flex">
+          <div className="counter-container w-full mt-4 flex">
             <div className="w-full quantity-container">
               <Label>Total Pesanan</Label>
               <div className="pesanan-button-container flex gap-x-2">
@@ -178,7 +183,7 @@ export default function Page() {
                   type="number"
                   value={quantity}
                   disabled
-                ></Input>
+                />
                 <Button
                   onClick={() => {
                     const newQuantity = quantity - 1;
@@ -206,6 +211,16 @@ export default function Page() {
               <Label>Total Harga</Label>
               <p className="text-2xl font-bold">{rupiahFormatter(price)}</p>
             </div>
+          </div>
+          <div className="catatan-container w-full mt-4">
+            <Label>Catatan</Label>
+            <Input
+              className="w-full"
+              type="text"
+              value={catatan}
+              onChange={(e) => setCatatan(e.target.value)}
+              placeholder="Tambahkan catatan untuk pesanan Anda"
+            />
           </div>
         </CardContent>
         <CardFooter>

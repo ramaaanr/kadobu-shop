@@ -1,5 +1,6 @@
 'use client';
 
+import { OrderStatusBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import orderStatus from '@/config/order-status';
 import {
@@ -12,35 +13,54 @@ import { ColumnDef } from '@tanstack/react-table';
 import _ from 'lodash';
 import { ArrowUpDown } from 'lucide-react';
 import Link from 'next/link';
+// export interface Order {
+//   id_order: number;
+//   kode_pesanan: string;
+//   jenis_pembayaran: string | null;
+//   status: string;
+//   total_pesanan: number;
+//   total_harga: number;
+//   keterangan: string;
+//   created_at: string; // Consider using Date if you parse the string into a Date object
+//   snap_token: string;
+//   nama_toko: string;
+//   id_toko: string;
+//   kode_produk: string;
+//   nama_produk: string;
+//   foto_produk: string;
+//   id_pembeli: string;
+//   catatan: string;
+//   username: string;
+//   email: string;
+// }
 export interface Order {
   id_order: number;
+  id_keranjang: number;
   kode_pesanan: string;
-  jenis_pembayaran: string | null;
   status: string;
-  total_pesanan: number;
+  created_at: string;
+  jumlah_pesanan: number;
   total_harga: number;
-  keterangan: string;
-  created_at: string; // Consider using Date if you parse the string into a Date object
-  snap_token: string;
-  nama_toko: string;
-  id_toko: string;
-  kode_produk: string;
+  catatan: string;
   nama_produk: string;
   foto_produk: string;
-  id_pembeli: string;
-  catatan: string;
+  status_produk: string;
+  kode_produk: string;
+  id_toko: string;
+  nama_toko: string;
   username: string;
   email: string;
+  jenis_pembayaran: string;
 }
 
 export const columns: ColumnDef<Order>[] = [
   {
-    accessorKey: 'kode_pesanan',
+    accessorKey: 'id_keranjang',
     header: '',
     cell: (row: any) => (
       <Link
         className="text-xs text-purple-400 hover:text-purple-600"
-        href={`/orders/detail/${row.getValue('kode_pesanan')}`}
+        href={`/orders/detail/${row.getValue('id_keranjang')}`}
       >
         Edit & Detail
       </Link>
@@ -112,17 +132,9 @@ export const columns: ColumnDef<Order>[] = [
       );
     },
     cell: ({ row }) => {
-      const getStatus: string = row.getValue('status');
-      const statusColor = orderStatus[getStatus].color;
-      const statusText = orderStatus[getStatus].text;
+      const status: string = row.getValue('status');
 
-      return (
-        <div
-          className={`py-1 px-2 ${statusColor} text-white rounded-md text-xs`}
-        >
-          {statusText}
-        </div>
-      );
+      return <OrderStatusBadge prevData={{ status }} />;
     },
   },
   {

@@ -29,6 +29,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ProductActions from '@/components/product-actions';
 import ProductImage from '@/components/product-image';
+import { API_PRODUCT_IMAGES } from '@/config/kadobu-api';
 
 export type Product = {
   nama_produk: string;
@@ -55,7 +56,18 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const foto_produk: string = row.getValue('foto_produk');
 
-      return <ProductImage height={64} width={64} foto_produk={foto_produk} />;
+      return (
+        <div className={`image-container relative w-[45px] h-[45px]`}>
+          <Image
+            src={`${API_PRODUCT_IMAGES}/${foto_produk}`}
+            alt={foto_produk}
+            className="rounded-lg"
+            fill
+            objectFit="cover"
+            objectPosition="center"
+          />
+        </div>
+      );
     },
   },
   {
