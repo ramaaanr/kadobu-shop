@@ -40,7 +40,7 @@ export default function Page() {
 
   return (
     <>
-      <div className="store-container ml-4 pr-4 flex gap-x-4 min-h-screen">
+      <div className="store-container ml-4 pr-4 flex flex-col md:flex-row gap-x-4 gap-y-4 min-h-screen">
         {user?.organizationMemberships?.length > 0 ? (
           <>
             <StoreDetail

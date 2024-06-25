@@ -93,9 +93,9 @@ const StaffDetail: React.FC<StaffDetailProps> = ({ orgId }) => {
   };
 
   return (
-    <Card className="w-[700px] h-fit">
-      <CardHeader className="flex flex-row gap-x-3 justify-between items-center">
-        <div className="flex items-center">
+    <Card className="w-full md:w-[700px] h-fit">
+      <CardHeader className="flex flex-col md:flex-row gap-x-3 justify-between items-center">
+        <div className="flex items-center w-full md:w-fit">
           <ContactRound size={24} />
           <div className="text-2xl w-fit font-semibold text-primary">
             Data Karyawan
@@ -104,7 +104,7 @@ const StaffDetail: React.FC<StaffDetailProps> = ({ orgId }) => {
         <AlertDialog>
           {organization ? (
             <AlertDialogTrigger asChild>
-              <Button className="w-fit">Tambah Karyawan</Button>
+              <Button className="w-full md:w-fit">Tambah Karyawan</Button>
             </AlertDialogTrigger>
           ) : (
             ''

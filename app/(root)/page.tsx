@@ -90,10 +90,6 @@ export default function Page() {
       setLoading(true);
       const response = await fetch('/api/statistic');
       if (response.ok) {
-        const sampleData = [
-          1243517, 1789423, 1347265, 192847, 1698345, 876543, 2019473, 567832,
-          1582937, 1032846, 1873546, 925738,
-        ];
         const { result } = await response.json();
         const month = new Date().getMonth();
         setTotalPesanan(result.total_pesanan[month]);
@@ -145,7 +141,6 @@ export default function Page() {
       },
     },
     maintainAspectRatio: false,
-    responsive: true,
     plugins: {
       legend: {
         position: 'top' as const,
@@ -161,8 +156,8 @@ export default function Page() {
 
   return (
     <>
-      <div className="dashboard-container ml-4 pr-4 w-full gap-x-4 min-h-screen">
-        <div className="card-container w-full gap-x-4 pr-16 flex">
+      <div className="dashboard-container md:ml-12 w-screen gap-x-4 px-6 pt-16 md:mt-0 md:pr-32  ">
+        <div className="card-container w-full gap-x-4 gap-y-4 flex flex-col md:grid md:grid-cols-2 xl:grid-cols-4 ">
           <Card className="w-full h-[205px]">
             <CardHeader className="font-bold text-3xl text-primary pt-4 pb-0 ">
               Buat Pesanan
@@ -243,8 +238,8 @@ export default function Page() {
             <CardFooter className="text-gray-500 ">Produk Siap Jual</CardFooter>
           </Card>
         </div>
-        <div className="card-bottom-conteiner mt-4 w-full pr-4 flex gap-x-4">
-          <Card className="w-1/2 ">
+        <div className="card-bottom-conteiner mt-4 w-screen flex  pr-12 md:pr-40 flex-col gap-y-4 md:flex-row gap-x-4">
+          <Card className="w-full md:w-1/2 ">
             <CardHeader className="flex mt-4 flex-row items-center justify-between w-full">
               <div>
                 <div className="font-medium text-primary">
@@ -265,7 +260,7 @@ export default function Page() {
               )}
             </CardContent>
           </Card>
-          <div className="w-1/2">
+          <div className="w-full md:w-1/2">
             <OrderTable />
           </div>
         </div>

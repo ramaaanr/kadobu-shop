@@ -54,8 +54,8 @@ export default function Page() {
   };
 
   return (
-    <div className="main-container justify-center items-center flex flex-col gap-y-4 pl-16 mx-auto">
-      <Card className="w-1/2">
+    <div className="main-container justify-center items-center flex flex-col px-8 gap-y-4 ">
+      <Card className="w-full md:w-1/2">
         <CardHeader>
           <CardTitle className="pt-4 text-primary">Kelola Toko</CardTitle>
         </CardHeader>

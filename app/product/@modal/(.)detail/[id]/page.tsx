@@ -57,7 +57,7 @@ export default function Page({ params }: { params: { id: string } }) {
   if (loading) {
     return (
       <Modal>
-        <div className="detail-container w-full flex gap-x-2 items-center">
+        <div className="detail-container w-full flex flex-col md:flex-row gap-x-2 items-center">
           <Skeleton className="h-[150px] w-[200px] rounded-xl" />
           <div className="w-full flex flex-col gap-y-2">
             <Skeleton className="h-4 w-full" />
@@ -78,7 +78,7 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <>
       <Modal>
-        <div className="detail-container w-full flex gap-x-2 items-center">
+        <div className="detail-container w-full flex flex-col md:flex-row gap-x-2 items-center">
           <ProductImage
             width={200}
             height={150}

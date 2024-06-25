@@ -142,7 +142,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
 
   if (loading || !store)
     return (
-      <Card className="w-[298px] h-fit">
+      <Card className="w-full md:w-[298px] h-fit">
         <CardHeader className="flex flex-row gap-x-2 items-center">
           <Store size={24} />
           <div className="text-2xl w-fit font-semibold text-primary">
@@ -172,7 +172,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
     );
   return (
     <>
-      <Card className="w-[298px] h-fit">
+      <Card className="w-full md:w-[298px] h-fit">
         <CardHeader className="flex flex-row gap-x-2 items-center">
           <Store size={24} />
           <div className="text-2xl w-fit font-semibold text-primary">
@@ -194,12 +194,12 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
             ''
           )}
         </CardHeader>
-        <CardContent className="flex flex-col gap-x-2">
+        <CardContent className="flex flex-col items-center gap-x-2">
           <Image
             alt={store.nama_toko}
             height={250}
             width={250}
-            className=" w-64 h-64 rounded-lg"
+            className="text-center w-64 h-64 rounded-lg"
             src={
               isEdit
                 ? previewFotoToko
@@ -221,7 +221,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
           ) : (
             ''
           )}
-          <div className="detail-container pt-4">
+          <div className="detail-container w-full pt-4">
             <p className="text-xs font-semibold">Nama Toko</p>
             {isEdit ? (
               <Input

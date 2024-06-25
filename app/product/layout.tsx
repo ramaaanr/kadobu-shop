@@ -17,6 +17,8 @@ export default function Layout({
       <Sidebar />
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <Header />
+        <div className="my-10"></div>
+
         {children}
       </div>
     </>

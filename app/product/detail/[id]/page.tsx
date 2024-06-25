@@ -58,7 +58,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <div className="form-container flex mx-auto w-[900px] rounded-lg border border-slate-100 shadow-sm p-4">
+      <div className="form-container flex flex-col md:flex-row mx-auto w-full  md:w-[900px] rounded-lg border border-slate-100 shadow-sm p-4">
         <ProductImage
           width={330}
           height={440}

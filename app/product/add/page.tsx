@@ -100,7 +100,7 @@ export default function Page() {
 
   return (
     <>
-      <div className="form-container flex gap-x-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
+      <div className="form-container flex flex-col md:flex-row gap-x-4 gap-y-2 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
         {preview ? (
           <Image
             className="rounded-lg"
@@ -118,7 +118,7 @@ export default function Page() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="gap-2 grid grid-cols-2"
+            className="gap-2 grid md:grid-cols-2 grid-cols-1"
           >
             <FormField
               control={form.control}

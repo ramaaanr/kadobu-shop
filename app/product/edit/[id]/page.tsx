@@ -40,6 +40,7 @@ import {
   AlertDialogFooter,
 } from '@/components/ui/alert-dialog';
 import ProductImage from '@/components/product-image';
+import Loading from '../../loading';
 
 const fetchOrgId = async () => {
   const response = await fetch('/api/org-id');
@@ -154,10 +155,10 @@ export default function Page({ params }: { params: { id: string } }) {
     }
   };
 
-  if (loading) return <>Loading</>;
+  if (loading) return <Loading />;
   return (
     <>
-      <div className="form-container flex gap-x-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
+      <div className="form-container flex flex-col md:flex-row gap-x-4 gap-y-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
         <div className={`image-container relative w-[330px] h-[440px]`}>
           <Image
             className="rounded-lg"
@@ -171,7 +172,7 @@ export default function Page({ params }: { params: { id: string } }) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="gap-2 grid grid-cols-2"
+            className="gap-2 grid grid-cols-1 md:grid-cols-2"
           >
             <FormField
               control={form.control}
@@ -325,7 +326,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 </FormItem>
               )}
             />
-            <div className="button-container flex w-full col-span-2 gap-x-4">
+            <div className="button-container flex w-full md:col-span-2 gap-x-4">
               <Button className="w-full" type="submit">
                 Submit
               </Button>

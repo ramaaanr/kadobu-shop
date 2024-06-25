@@ -62,8 +62,11 @@ export function DataTable<TData, TValue>({
     <div className="card-container px-8">
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="w-full mt-4">
-          <CardDescription className="flex w-full gap-x-2">
-            <Button onClick={() => route.push('/product/add')}>
+          <CardDescription className="flex flex-col gap-y-2 md:flex-row w-full gap-x-2">
+            <Button
+              onClick={() => route.push('/product/add')}
+              className="md:text-center text-start"
+            >
               Tambah Produk
             </Button>
             <Input

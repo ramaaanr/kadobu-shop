@@ -119,17 +119,17 @@ export default function Page() {
   if (isUserLoaded && isOrganizationLoaded)
     return (
       <>
-        <div className="form-container flex gap-x-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
+        <div className="form-container flex flex-col md:flex-row gap-x-4 mx-8 rounded-lg border border-slate-100 shadow-sm p-4">
           {preview ? (
             <Image
-              className="rounded-lg"
+              className="rounded-lg mx-auto md:mx-0"
               width={'330'}
               alt={'gambar'}
-              height={'440'}
+              height={'330'}
               src={preview}
             />
           ) : (
-            <div className="preview-image w-[330px] h-[330px] rounded-lg flex flex-col justify-center items-center bg-gray-100">
+            <div className="mx-auto md:mx-0 preview-image w-[330px] h-[330px] rounded-lg flex flex-col justify-center items-center bg-gray-100">
               <ImagePlus size="180" color="#9aa0a6" />
               <p className="text-gray-500 font-medium">Preview Gambar Toko</p>
             </div>
@@ -137,7 +137,7 @@ export default function Page() {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="gap-2 grid grid-cols-2"
+              className="gap-2 grid grid-cols-1 md:grid-cols-2"
             >
               <FormField
                 control={form.control}
