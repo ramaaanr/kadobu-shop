@@ -39,7 +39,7 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: 'id_keranjang',
     header: '',
     cell: (row: any) => {
-      const keranjang = encryptId(row.getValue('id_keranjang'));
+      const keranjang = row.getValue('id_keranjang');
       return (
         <Link
           className="text-xs focus:cursor-wait text-purple-400 hover:text-purple-600"

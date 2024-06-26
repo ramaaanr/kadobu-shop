@@ -59,7 +59,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const idKeranjang = decryptId(params.id);
+      const idKeranjang = params.id;
       const response = await fetch(`/api/keranjang/${idKeranjang}`);
       if (!response.ok) {
         setError(true);
