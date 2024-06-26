@@ -17,10 +17,13 @@ import {
 import { useAuth, useOrganization, useOrganizationList } from '@clerk/nextjs';
 import { StoreIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { MoonLoader } from 'react-spinners';
 import { toast } from 'sonner';
 
 export default function Page() {
   const router = useRouter();
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const { isLoaded, setActive, userInvitations, userMemberships } =
     useOrganizationList({
       ...UserInvitationsParams,
@@ -74,9 +77,17 @@ export default function Page() {
           <Separator className="my-4" />
           <Button
             variant={'secondary'}
-            onClick={() => router.push('/store/create')}
+            disabled={isSubmiting}
+            onClick={() => {
+              setIsSubmiting(true);
+              router.push('/store/create');
+            }}
           >
-            Buat Toko
+            {isSubmiting ? (
+              <MoonLoader className="mx-4" color="#FFFFFF" size={16} />
+            ) : (
+              'Buat Toko'
+            )}
           </Button>
         </CardContent>
         <CardHeader>

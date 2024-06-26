@@ -172,7 +172,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ orgId }) => {
     );
   return (
     <>
-      <Card className="w-full md:w-[298px] h-fit">
+      <Card className="w-full md:w-[350px] h-fit">
         <CardHeader className="flex flex-row gap-x-2 items-center">
           <Store size={24} />
           <div className="text-2xl w-fit font-semibold text-primary">

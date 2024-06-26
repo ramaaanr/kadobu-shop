@@ -32,6 +32,8 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
+import { MoonLoader } from 'react-spinners';
+import Loading from '../loading';
 
 interface Product {
   kode_produk: string;
@@ -52,6 +54,7 @@ export default function Page() {
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
   const [catatan, setCatatan] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,6 +97,7 @@ export default function Page() {
     if (!response.ok) {
       toast.error('Penambahan Pesanan gagal');
       console.log(res.message);
+      setIsSubmitting(false);
     } else {
       toast.success('Penambahan Pesanan Berhasil');
       router.push('/orders');
@@ -102,7 +106,7 @@ export default function Page() {
 
   if (error) throw Error('Tambah Pesanan Bermasalah');
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -234,11 +238,20 @@ export default function Page() {
                 Batal
               </Button>
               <Button
-                onClick={checkoutHandler}
+                onClick={async () => {
+                  setIsSubmitting(true);
+                  await checkoutHandler();
+                }}
                 className="w-full"
-                disabled={!product || product?.stok_produk === 0}
+                disabled={
+                  !product || product?.stok_produk === 0 || isSubmitting
+                }
               >
-                Bayar
+                {isSubmitting ? (
+                  <MoonLoader className="mx-4" color="#FFFFFF" size={16} />
+                ) : (
+                  'Bayar'
+                )}
               </Button>
             </div>
           </CardFooter>

@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import orderStatus from '@/config/order-status';
+import { encryptId } from '@/utils/encryption';
 import {
   capitalCaseAndRemoveUnderscore,
   dateFormatter,
@@ -14,6 +15,7 @@ import { ArrowUpDown } from 'lucide-react';
 import Link from 'next/link';
 export interface Order {
   id_order: number;
+  id_keranjang: number;
   kode_pesanan: string;
   jenis_pembayaran: string | null;
   status: string;
@@ -34,16 +36,19 @@ export interface Order {
 
 export const columns: ColumnDef<Order>[] = [
   {
-    accessorKey: 'kode_pesanan',
+    accessorKey: 'id_keranjang',
     header: '',
-    cell: (row: any) => (
-      <Link
-        className="text-xs text-purple-400 hover:text-purple-600"
-        href={`/orders/detail/${row.getValue('kode_pesanan')}`}
-      >
-        Kelola
-      </Link>
-    ),
+    cell: (row: any) => {
+      const keranjang = encryptId(row.getValue('id_keranjang'));
+      return (
+        <Link
+          className="text-xs focus:cursor-wait text-purple-400 hover:text-purple-600"
+          href={`/orders/detail/${keranjang}`}
+        >
+          Kelola
+        </Link>
+      );
+    },
   },
   {
     accessorKey: 'username',

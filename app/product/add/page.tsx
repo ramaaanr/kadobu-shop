@@ -28,6 +28,7 @@ import Image from 'next/image';
 import { ImagePlus } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 import { API_PRODUCT, HEADERS_PUBLIC } from '@/config/kadobu-api';
+import { MoonLoader } from 'react-spinners';
 
 const fetchOrgId = async () => {
   const response = await fetch('/api/org-id');
@@ -87,13 +88,13 @@ export default function Page() {
 
       if (responseData.errors) {
         toast.error('Product Gagal Ditambahkan');
+        setLoading(false);
       } else {
         toast.success('Product Berhasil Ditambahkan');
         router.push('/product');
       }
     } catch (error) {
       toast.error('Product Gagal Ditambahkan');
-    } finally {
       setLoading(false);
     }
   };
@@ -295,7 +296,11 @@ export default function Page() {
               )}
             />
             <Button className="w-full mt-8" type="submit" disabled={loading}>
-              {loading ? 'Submitting...' : 'Submit'}
+              {loading ? (
+                <MoonLoader className="mx-4" color="#FFFFFF" size={16} />
+              ) : (
+                'Tambah Produk'
+              )}
             </Button>
           </form>
         </Form>

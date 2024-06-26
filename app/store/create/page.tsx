@@ -25,6 +25,7 @@ import { useAuth } from '@clerk/nextjs';
 import { API_TOKO } from '@/config/kadobu-api';
 import Loading from '../loading';
 import { Textarea } from '@/components/ui/textarea';
+import { MoonLoader } from 'react-spinners';
 
 export default function Page() {
   const [loading, setLoading] = useState(true);
@@ -255,7 +256,11 @@ export default function Page() {
                 )}
               />
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Loading' : 'Buat Toko '}
+                {isSubmitting ? (
+                  <MoonLoader className="mx-4" color="#FFFFFF" size={16} />
+                ) : (
+                  'Buat Toko'
+                )}
               </Button>
             </form>
           </Form>

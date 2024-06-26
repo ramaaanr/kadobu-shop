@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       headers: HEADERS,
     });
     if (resUserById.ok) {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
     const resPostUser = await fetch(`${API_PENJUAL}`, {
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
         { status: 400 },
       );
     }
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   } catch (error: any) {
     return NextResponse.json(
       {

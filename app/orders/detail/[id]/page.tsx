@@ -41,6 +41,7 @@ import { toast } from 'sonner';
 import { Badge, OrderStatusBadge } from '@/components/ui/badge';
 import Loading from '../../loading';
 import { useRouter } from 'next/navigation';
+import { decryptId } from '@/utils/encryption';
 
 interface statusKet {
   status: string;
@@ -58,7 +59,8 @@ export default function Page({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`/api/keranjang/${params.id}`);
+      const idKeranjang = decryptId(params.id);
+      const response = await fetch(`/api/keranjang/${idKeranjang}`);
       if (!response.ok) {
         setError(true);
       }
@@ -122,7 +124,7 @@ export default function Page({ params }: { params: { id: string } }) {
               >
                 Kembali
               </Button>
-              <div className="card-header-container flex gap-x-4 ">
+              <div className="card-header-container w-full flex gap-x-4 ">
                 <div className={`image-container relative w-[75px] h-[75px]`}>
                   <Image
                     src={`${API_PRODUCT_IMAGES}/${data.foto_produk}`}
@@ -133,14 +135,14 @@ export default function Page({ params }: { params: { id: string } }) {
                     objectPosition="center"
                   />
                 </div>
-                <div>
+                <div className="w-full">
                   <div className="w-full">
                     <div className="font-bold text-2xl">
                       {data.kode_pesanan}
                     </div>
                   </div>
                   <div className=" w-full flex flex-col md:flex-row  gap-x-2 items-center">
-                    <div className="font-semibold  w-full">
+                    <div className="font-semibold  w-40">
                       {dateFormatter(data.created_at)}
                     </div>
                     <div className="flex w-full gap-x-2">

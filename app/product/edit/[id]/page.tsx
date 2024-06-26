@@ -41,6 +41,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import ProductImage from '@/components/product-image';
 import Loading from '../../loading';
+import { MoonLoader } from 'react-spinners';
 
 const fetchOrgId = async () => {
   const response = await fetch('/api/org-id');
@@ -126,7 +127,6 @@ export default function Page({ params }: { params: { id: string } }) {
       body: formData,
     });
 
-    setLoading(false);
     if (!response.ok) {
       toast.error('Product Gagal Dirubah');
       throw new Error('Network response was not ok');
@@ -136,6 +136,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
     if (responseData.errors) {
       toast.error('Product Gagal Dirubah');
+      setLoading(false);
     } else {
       toast.success('Product Berhasil Dirubah');
       router.push('/product');
@@ -327,8 +328,12 @@ export default function Page({ params }: { params: { id: string } }) {
               )}
             />
             <div className="button-container flex w-full md:col-span-2 gap-x-4">
-              <Button className="w-full" type="submit">
-                Submit
+              <Button className="w-full " type="submit" disabled={loading}>
+                {loading ? (
+                  <MoonLoader className="mx-4" color="#FFFFFF" size={16} />
+                ) : (
+                  'Ubah Produk'
+                )}
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger className="w-full" asChild>

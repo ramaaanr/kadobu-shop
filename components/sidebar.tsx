@@ -44,8 +44,10 @@ const Sidebar = () => {
     setLoading(false);
   }, [pathname]);
 
-  const handleClick = (href: string) => {
+  const handleClick = async (href: string) => {
     setLoading(true);
+    const res = await fetch('/api/org-id');
+    if (!res.ok) setLoading(false);
   };
 
   return (
@@ -74,7 +76,7 @@ const Sidebar = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href="/"
+                  href="/dashboard"
                   className={navItemClass('')}
                   onClick={() => handleClick('/')}
                 >
@@ -137,7 +139,7 @@ const Sidebar = () => {
       <nav className="fixed bottom-0 left-0 right-0 z-40 bg-background block md:hidden border-t py-2">
         <div className="flex justify-around items-center">
           <Link
-            href="/"
+            href="/dashboard"
             className={navItemClass('dashboard')}
             onClick={() => handleClick('/')}
           >

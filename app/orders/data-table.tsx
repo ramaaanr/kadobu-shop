@@ -30,6 +30,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { MoonLoader } from 'react-spinners';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -40,6 +41,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const route = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -63,8 +65,19 @@ export function DataTable<TData, TValue>({
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader className="w-full mt-4">
           <CardDescription className="flex w-full gap-x-2">
-            <Button onClick={() => route.push('/orders/add')}>
-              Tambah Pesanan
+            <Button
+              onClick={() => {
+                setIsSubmitting(true);
+                route.push('/orders/add');
+              }}
+              className="md:text-center w-40 text-start"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <MoonLoader className="mx-4" color="#FFFFFF" size={16} />
+              ) : (
+                'Tambah Pesanan'
+              )}
             </Button>
             <Input
               placeholder="Kode Pesanan"

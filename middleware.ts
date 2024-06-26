@@ -10,7 +10,11 @@ const isPublicRoute = createRouteMatcher([
   '/api/auth(.*)',
 ]);
 
-const isHaveStore = createRouteMatcher(['/', '/product(.*)', '/orders(.*)']);
+const isHaveStore = createRouteMatcher([
+  '/product(.*)',
+  '/dashboard(.*)',
+  '/orders(.*)',
+]);
 
 export default clerkMiddleware(async (auth, request: NextRequest) => {
   if (!isPublicRoute(request)) {

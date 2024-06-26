@@ -5,7 +5,7 @@ import { OrgInvitationsParams, OrgMembersParams } from '@/utils/organizations';
 import { useOrganization, useUser } from '@clerk/nextjs';
 import { FormEvent, FormEventHandler, useState } from 'react';
 import { OrganizationCustomRoleKey } from '@clerk/types';
-import { ContactRound, PersonStanding } from 'lucide-react';
+import { ContactRound, MessageSquareDiff, PersonStanding } from 'lucide-react';
 import {
   AlertDialogFooter,
   AlertDialogHeader,
@@ -34,8 +34,10 @@ interface StaffDetailProps {
 }
 
 const StaffDetail: React.FC<StaffDetailProps> = ({ orgId }) => {
-  const { isLoaded, memberships, organization, invitations } =
-    useOrganization(OrgMembersParams);
+  const { isLoaded, memberships, organization, invitations } = useOrganization({
+    ...OrgInvitationsParams,
+    ...OrgMembersParams,
+  });
   const [emailAddress, setEmailAddress] = useState('');
   const [disabled, setDisabled] = useState(false);
   const { user } = useUser();
@@ -93,65 +95,131 @@ const StaffDetail: React.FC<StaffDetailProps> = ({ orgId }) => {
   };
 
   return (
-    <Card className="w-full md:w-[700px] h-fit">
-      <CardHeader className="flex flex-col md:flex-row gap-x-3 justify-between items-center">
-        <div className="flex items-center w-full md:w-fit">
-          <ContactRound size={24} />
-          <div className="text-2xl w-fit font-semibold text-primary">
-            Data Karyawan
+    <div className="flex flex-col w-full gap-y-4">
+      <Card className="w-full ">
+        <CardHeader className="flex flex-col md:flex-row gap-x-3 justify-between items-center">
+          <div className="flex items-center w-full md:w-fit">
+            <ContactRound size={24} />
+            <div className="text-2xl w-fit font-semibold text-primary">
+              Data Karyawan
+            </div>
           </div>
-        </div>
-        <AlertDialog>
-          {organization ? (
-            <AlertDialogTrigger asChild>
-              <Button className="w-full md:w-fit">Tambah Karyawan</Button>
-            </AlertDialogTrigger>
-          ) : (
-            ''
-          )}
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Tambah Email Karyawan</AlertDialogTitle>
-            </AlertDialogHeader>
-            <form onSubmit={onSubmit}>
-              <Input
-                name="email"
-                type="text"
-                placeholder="Email address"
-                value={emailAddress}
-                onChange={(e) => setEmailAddress(e.target.value)}
-                className="mb-2"
-              />
-              <AlertDialogFooter>
-                <AlertDialogCancel>Back</AlertDialogCancel>
-                <Button type="submit" disabled={disabled}>
-                  Invite
-                </Button>
-              </AlertDialogFooter>
-            </form>
-          </AlertDialogContent>
-        </AlertDialog>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-x-2">
-        <Table>
-          <TableCaption>List Karyawan</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Username</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {memberships?.data?.map((mem) => (
-              <TableRow key={mem.id}>
-                <TableCell>
-                  {mem.publicUserData.identifier}{' '}
-                  {mem.publicUserData.userId === user?.id && '(You)'}
-                </TableCell>
-                <TableCell>{mem.createdAt.toLocaleDateString()}</TableCell>
-                <TableCell>
-                  {mem.publicUserData.userId !== user?.id && (
+          <AlertDialog>
+            {organization ? (
+              <AlertDialogTrigger asChild>
+                <Button className="w-full md:w-fit">Tambah Karyawan</Button>
+              </AlertDialogTrigger>
+            ) : (
+              ''
+            )}
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Tambah Email Karyawan</AlertDialogTitle>
+              </AlertDialogHeader>
+              <form onSubmit={onSubmit}>
+                <Input
+                  name="email"
+                  type="text"
+                  placeholder="Email address"
+                  value={emailAddress}
+                  onChange={(e) => setEmailAddress(e.target.value)}
+                  className="mb-2"
+                />
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Back</AlertDialogCancel>
+                  <Button type="submit" disabled={disabled}>
+                    Invite
+                  </Button>
+                </AlertDialogFooter>
+              </form>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-x-2 min-h-[200px]">
+          <Table>
+            <TableCaption>List Karyawan</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Username</TableHead>
+                <TableHead>Joined</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {memberships?.data?.map((mem) => (
+                <TableRow key={mem.id}>
+                  <TableCell>
+                    {mem.publicUserData.identifier}{' '}
+                    {mem.publicUserData.userId === user?.id && '(You)'}
+                  </TableCell>
+                  <TableCell>{mem.createdAt.toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    {mem.publicUserData.userId !== user?.id && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant={'outline'}>Remove</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Apakah Anda Ingin Menghapus Karyawan
+                            </AlertDialogTitle>
+                          </AlertDialogHeader>
+
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Back</AlertDialogCancel>
+                            <Button
+                              onClick={async () => {
+                                const isRemoveSucces =
+                                  await removeMemberHandler(
+                                    mem.publicUserData.userId || '',
+                                  );
+                                if (isRemoveSucces) {
+                                  await mem.destroy();
+                                  await memberships?.revalidate();
+                                  toast.success('Karyawan Dihapus');
+                                }
+                              }}
+                              type="button"
+                            >
+                              Hapus
+                            </Button>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      <Card className="w-full ">
+        <CardHeader className="flex flex-col md:flex-row gap-x-3 justify-between items-center">
+          <div className="flex items-center w-full md:w-fit">
+            <MessageSquareDiff size={24} />
+            <div className="text-2xl w-fit font-semibold text-primary">
+              Data Karyawan Yang Diundang
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-x-2 min-h-[200px]">
+          <Table>
+            <TableCaption>List Karyawan</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Username</TableHead>
+                <TableHead>Joined</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invitations?.data?.map((inv) => (
+                <TableRow key={inv.id}>
+                  <TableCell>{inv.emailAddress}</TableCell>
+                  <TableCell>{inv.createdAt.toLocaleDateString()}</TableCell>
+                  <TableCell>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant={'outline'}>Remove</Button>
@@ -159,7 +227,7 @@ const StaffDetail: React.FC<StaffDetailProps> = ({ orgId }) => {
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            Apakah Anda Ingin Menghapus Karyawan
+                            Apakah Anda Ingin Menghapus Undangan
                           </AlertDialogTitle>
                         </AlertDialogHeader>
 
@@ -167,14 +235,12 @@ const StaffDetail: React.FC<StaffDetailProps> = ({ orgId }) => {
                           <AlertDialogCancel>Back</AlertDialogCancel>
                           <Button
                             onClick={async () => {
-                              const isRemoveSucces = await removeMemberHandler(
-                                mem.publicUserData.userId || '',
-                              );
-                              if (isRemoveSucces) {
-                                await mem.destroy();
-                                await memberships?.revalidate();
-                                toast.success('Karyawan Dihapus');
-                              }
+                              await inv.revoke();
+                              await Promise.all([
+                                memberships?.revalidate,
+                                invitations?.revalidate,
+                              ]);
+                              toast.success('Undangan Dihapus');
                             }}
                             type="button"
                           >
@@ -183,14 +249,14 @@ const StaffDetail: React.FC<StaffDetailProps> = ({ orgId }) => {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

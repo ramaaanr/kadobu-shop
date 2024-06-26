@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Bar } from 'react-chartjs-2';
 import OrderTable from './(order-table)/order-table';
+import { MoonLoader } from 'react-spinners';
 
 function generateDataChart(data: number[]) {
   const labels = [
@@ -63,6 +64,7 @@ const countPercentage = (prev: number, current: number): number => {
 };
 
 export default function Page() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [totalPenjualan, setTotalPenjualan] = useState(0);
@@ -164,8 +166,18 @@ export default function Page() {
               Catat pesanan kustomer dengan cepat
             </CardContent>
             <CardFooter className="text-gray-500 ">
-              <Button onClick={() => router.push('/orders/add')}>
-                Pesanan Baru
+              <Button
+                onClick={() => {
+                  setIsSubmitting(true);
+                  router.push('/orders/add');
+                }}
+                className="w-full"
+              >
+                {isSubmitting ? (
+                  <MoonLoader className="mx-4" color="#FFFFFF" size={16} />
+                ) : (
+                  'Buat Pesanan baru'
+                )}
               </Button>
             </CardFooter>
           </Card>

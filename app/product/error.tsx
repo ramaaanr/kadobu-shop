@@ -26,7 +26,7 @@ const ErrorPage = ({ error, reset }: ErrorPageProps) => {
         Coba Lagi
       </button>
       <button
-        onClick={() => router.push('/')}
+        onClick={() => router.push('/dashboard')}
         className="mt-2 px-4 py-2 bg-gray-600 text-white rounded"
       >
         Kembali Ke Halaman Utama
